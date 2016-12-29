@@ -51,7 +51,7 @@ function stringEndsWith(str, suffix) {
 
 // Simulates a path join.
 function pathJoin(item1, item2) {
-  return item1 + ':' + item2;
+  return `${item1}:${item2}`;
 }
 
 // Returns the value.

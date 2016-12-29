@@ -129,8 +129,8 @@ describe('JWT auth client', function() {
         };
 
         jwt.getAccessToken(function(err, got) {
-          assert.strictEqual(null, err, 'no error was expected: got\n' + err);
-          assert.strictEqual(want, got, 'the access token was wrong: ' + got);
+          assert.strictEqual(null, err, `no error was expected: got\n${err}`);
+          assert.strictEqual(want, got, `the access token was wrong: ${got}`);
           done();
         });
       });
@@ -162,13 +162,13 @@ describe('JWT auth client', function() {
             return callback(null, wanted_token);
           }
         };
-        const want = 'Bearer ' + wanted_token;
+        const want = `Bearer ${wanted_token}`;
         const retValue = 'dummy';
         const unusedUri = null;
         const res = jwt.getRequestMetadata(unusedUri, function(err, got) {
-          assert.strictEqual(null, err, 'no error was expected: got\n' + err);
+          assert.strictEqual(null, err, `no error was expected: got\n${err}`);
           assert.strictEqual(want, got.Authorization,
-                             'the authorization header was wrong: ' + got.Authorization);
+                             `the authorization header was wrong: ${got.Authorization}`);
           done();
           return retValue;
         });
@@ -197,7 +197,7 @@ describe('JWT auth client', function() {
         const testUri = 'http:/example.com/my_test_service';
         const retValue = 'dummy';
         const res = jwt.getRequestMetadata(testUri, function(err, got) {
-          assert.strictEqual(null, err, 'no error was expected: got\n' + err);
+          assert.strictEqual(null, err, `no error was expected: got\n${err}`);
           assert.notStrictEqual(null, got, 'the creds should be present');
           const decoded = jws.decode(got.Authorization.replace('Bearer ', ''));
           assert.strictEqual(email, decoded.payload.iss);

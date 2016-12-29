@@ -45,7 +45,7 @@ describe('.getRequestMetadata', function() {
 
     const retValue = 'dummy';
     const expectAuth = function(err, creds) {
-      assert.strictEqual(null, err, 'no error was expected: got\n' + err);
+      assert.strictEqual(null, err, `no error was expected: got\n${err}`);
       assert.notStrictEqual(null, creds, 'an creds object should be present');
       const decoded = jws.decode(creds.Authorization.replace('Bearer ', ''));
       assert.strictEqual(email, decoded.payload.iss);

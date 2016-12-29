@@ -141,35 +141,37 @@ describe('OAuth2 client', function() {
     const now = new Date().getTime() / 1000;
     const expiry = now + (maxLifetimeSecs / 2);
 
-    const idToken = '{' +
-        '"iss":"testissuer",' +
-        '"aud":"testaudience",' +
-        '"azp":"testauthorisedparty",' +
-        '"email_verified":"true",' +
-        '"id":"123456789",' +
-        '"sub":"123456789",' +
-        '"email":"test@test.com",' +
-        '"iat":' + now + ',' +
-        '"exp":' + expiry +
-      '}';
-    const envelope = '{' +
-        '"kid":"keyid",' +
-        '"alg":"RS256"' +
-      '}';
+    const idToken = Buffer.from(JSON.stringify({
+      iss: 'testissuer',
+      aud: 'testaudience',
+      azp: 'testauthorisedparty',
+      email_verified: 'true',
+      id: '123456789',
+      sub: '123456789',
+      email: 'test@test.com',
+      iat: now,
+      exp: expiry
+    })).toString('base64');
+    const envelope = Buffer.from(JSON.stringify({
+      kid: 'keyid',
+      alg: 'RS256'
+    })).toString('base64');
 
-    let data = new Buffer(envelope).toString('base64') +
-      '.' + new Buffer(idToken).toString('base64');
+    let data = `${envelope}.${idToken}`;
 
     const signer = crypto.createSign('sha256');
     signer.update(data);
     const signature = signer.sign(privateKey, 'base64');
 
-    data += '.' + signature;
+    data = `${data}.${signature}`;
 
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-    const login = oauth2client.verifySignedJwtWithCerts(data,
-        {keyid: publicKey}, 'testaudience');
+    const login = oauth2client.verifySignedJwtWithCerts(
+      data,
+      { keyid: publicKey },
+      'testaudience'
+    );
 
     assert.equal(login.getUserId(), '123456789');
     done();
@@ -185,30 +187,29 @@ describe('OAuth2 client', function() {
     const now = new Date().getTime() / 1000;
     const expiry = now + (maxLifetimeSecs / 2);
 
-    const idToken = '{' +
-        '"iss":"testissuer",' +
-        '"aud":"wrongaudience",' +
-        '"azp":"testauthorisedparty",' +
-        '"email_verified":"true",' +
-        '"id":"123456789",' +
-        '"sub":"123456789",' +
-        '"email":"test@test.com",' +
-        '"iat":' + now + ',' +
-        '"exp":' + expiry +
-      '}';
-    const envelope = '{' +
-        '"kid":"keyid",' +
-        '"alg":"RS256"' +
-      '}';
+    const idToken = Buffer.from(JSON.stringify({
+      iss: 'testissuer',
+      aud: 'wrongaudience',
+      azp: 'testauthorisedparty',
+      email_verified: 'true',
+      id: '123456789',
+      sub: '123456789',
+      email: 'test@test.com',
+      iat: now,
+      exp: expiry
+    })).toString('base64');
+    const envelope = Buffer.from(JSON.stringify({
+      kid: 'keyid',
+      alg: 'RS256'
+    })).toString('base64');
 
-    let data = new Buffer(envelope).toString('base64') +
-      '.' + new Buffer(idToken).toString('base64');
+    let data = `${envelope}.${idToken}`;
 
     const signer = crypto.createSign('sha256');
     signer.update(data);
     const signature = signer.sign(privateKey, 'base64');
 
-    data += '.' + signature;
+    data = `${data}.${signature}`;
 
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
@@ -235,30 +236,29 @@ describe('OAuth2 client', function() {
     const now = new Date().getTime() / 1000;
     const expiry = now + (maxLifetimeSecs / 2);
 
-    const idToken = '{' +
-        '"iss":"testissuer",' +
-        '"aud":"wrongaudience",' +
-        '"azp":"testauthorisedparty",' +
-        '"email_verified":"true",' +
-        '"id":"123456789",' +
-        '"sub":"123456789",' +
-        '"email":"test@test.com",' +
-        '"iat":' + now + ',' +
-        '"exp":' + expiry +
-      '}';
-    const envelope = '{' +
-        '"kid":"keyid",' +
-        '"alg":"RS256"' +
-      '}';
+    const idToken = Buffer.from(JSON.stringify({
+      iss: 'testissuer',
+      aud: 'wrongaudience',
+      azp: 'testauthorisedparty',
+      email_verified: 'true',
+      id: '123456789',
+      sub: '123456789',
+      email: 'test@test.com',
+      iat: now,
+      exp: expiry
+    })).toString('base64');
+    const envelope = Buffer.from(JSON.stringify({
+      kid: 'keyid',
+      alg: 'RS256'
+    })).toString('base64');
 
-    let data = new Buffer(envelope).toString('base64') +
-      '.' + new Buffer(idToken).toString('base64');
+    let data = `${envelope}.${idToken}`;
 
     const signer = crypto.createSign('sha256');
     signer.update(data);
     const signature = signer.sign(privateKey, 'base64');
 
-    data += '.' + signature;
+    data = `${data}.${signature}`;
 
     const validAudiences = ['testaudience','extra-audience'];
     const auth = new GoogleAuth();
@@ -282,24 +282,23 @@ describe('OAuth2 client', function() {
     const privateKey = fs.readFileSync('./test/fixtures/private.pem',
         'utf-8');
 
-    const idToken = '{' +
-        '"iss":"testissuer",' +
-        '"aud":"testaudience",' +
-        '"azp":"testauthorisedparty",' +
-        '"email_verified":"true",' +
-        '"id":"123456789",' +
-        '"sub":"123456789",' +
-        '"email":"test@test.com",' +
-        '"iat":1393241597,' +
-        '"exp":1393245497' +
-      '}';
-    const envelope = '{' +
-        '"kid":"keyid",' +
-        '"alg":"RS256"' +
-      '}';
+    const idToken = Buffer.from(JSON.stringify({
+      iss: 'testissuer',
+      aud: 'testaudience',
+      azp: 'testauthorisedparty',
+      email_verified: 'true',
+      id: '123456789',
+      sub: '123456789',
+      email: 'test@test.com',
+      iat: 1393241597,
+      exp: 1393245497
+    })).toString('base64');
+    const envelope = Buffer.from(JSON.stringify({
+      kid: 'keyid',
+      alg: 'RS256'
+    })).toString('base64');
 
-    let data = new Buffer(envelope).toString('base64') +
-      '.' + new Buffer(idToken).toString('base64');
+    let data = `${envelope}.${idToken}`;
 
     const signer = crypto.createSign('sha256');
     signer.update(data);
@@ -334,30 +333,27 @@ describe('OAuth2 client', function() {
     const now = new Date().getTime() / 1000;
     const expiry = now + (maxLifetimeSecs / 2);
 
-    const idToken = '{' +
-        '"iss":"testissuer",' +
-        '"aud":"testaudience",' +
-        '"azp":"testauthorisedparty",' +
-        '"email_verified":"true",' +
-        '"id":"123456789",' +
-        '"sub":"123456789",' +
-        '"email":"test@test.com",' +
-        '"iat":' + now + ',' +
-        '"exp":' + expiry +
-      '}';
-    const envelope = '{' +
-        '"kid":"keyid"' +
-        '"alg":"RS256"' +
-      '}';
+    const idToken = Buffer.from(JSON.stringify({
+      iss: 'testissuer',
+      aud: 'testaudience',
+      azp: 'testauthorisedparty',
+      email_verified: 'true',
+      id: '123456789',
+      sub: '123456789',
+      email: 'test@test.com',
+      iat: now,
+      exp: expiry
+    })).toString('base64');
+    // Notice the missing semicolon
+    const envelope = '{"kid":"keyid""alg":"RS256"}';
 
-    let data = new Buffer(envelope).toString('base64') +
-      '.' + new Buffer(idToken).toString('base64');
+    let data = `${Buffer.from(envelope).toString('base64')}.${idToken}`;
 
     const signer = crypto.createSign('sha256');
     signer.update(data);
     const signature = signer.sign(privateKey, 'base64');
 
-    data += '.' + signature;
+    data = `${data}.${signature}`;
 
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
@@ -386,29 +382,29 @@ describe('OAuth2 client', function() {
     const expiry = now + (maxLifetimeSecs / 2);
 
     const idToken = '{' +
-        '"iss":"testissuer"' +
-        '"aud":"testaudience",' +
-        '"azp":"testauthorisedparty",' +
-        '"email_verified":"true",' +
-        '"id":"123456789",' +
-        '"sub":"123456789",' +
-        '"email":"test@test.com",' +
-        '"iat":' + now + ',' +
-        '"exp":' + expiry +
-      '}';
-    const envelope = '{' +
-        '"kid":"keyid",' +
-        '"alg":"RS256"' +
-      '}';
+      // Notice the missing semicolon
+      '"iss":"testissuer"' +
+      '"aud":"testaudience",' +
+      '"azp":"testauthorisedparty",' +
+      '"email_verified":"true",' +
+      '"id":"123456789",' +
+      '"sub":"123456789",' +
+      '"email":"test@test.com",' +
+      '"iat":' + now + ',' +
+      '"exp":' + expiry +
+    '}';
+    const envelope = Buffer.from(JSON.stringify({
+      kid: 'keyid',
+      alg: 'RS256'
+    })).toString('base64');
 
-    let data = new Buffer(envelope).toString('base64') +
-      '.' + new Buffer(idToken).toString('base64');
+    let data = `${envelope}.${Buffer.from(idToken).toString('base64')}`;
 
     const signer = crypto.createSign('sha256');
     signer.update(data);
     const signature = signer.sign(privateKey, 'base64');
 
-    data += '.' + signature;
+    data = `${data}.${signature}`;
 
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
@@ -434,25 +430,23 @@ describe('OAuth2 client', function() {
     const now = new Date().getTime() / 1000;
     const expiry = now + (maxLifetimeSecs / 2);
 
-    const idToken = '{' +
-        '"iss":"testissuer",' +
-        '"aud":"testaudience",' +
-        '"azp":"testauthorisedparty",' +
-        '"email_verified":"true",' +
-        '"id":"123456789",' +
-        '"sub":"123456789",' +
-        '"email":"test@test.com",' +
-        '"iat":' + now + ',' +
-        '"exp":' + expiry +
-      '}';
-    const envelope = '{' +
-        '"kid":"keyid",' +
-        '"alg":"RS256"' +
-      '}';
+    const idToken = Buffer.from(JSON.stringify({
+      iss: 'testissuer',
+      aud: 'testaudience',
+      azp: 'testauthorisedparty',
+      email_verified: 'true',
+      id: '123456789',
+      sub: '123456789',
+      email: 'test@test.com',
+      iat: now,
+      exp: expiry
+    })).toString('base64');
+    const envelope = Buffer.from(JSON.stringify({
+      kid: 'keyid',
+      alg: 'RS256'
+    })).toString('base64');
 
-    const data = new Buffer(envelope).toString('base64') +
-      '.' + new Buffer(idToken).toString('base64') +
-      '.' + 'broken-signature';
+    const data = `${envelope}.${idToken}.broken-signature`;
 
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
@@ -478,29 +472,28 @@ describe('OAuth2 client', function() {
 
     const now = new Date().getTime() / 1000;
 
-    const idToken = '{' +
-        '"iss":"testissuer",' +
-        '"aud":"testaudience",' +
-        '"azp":"testauthorisedparty",' +
-        '"email_verified":"true",' +
-        '"id":"123456789",' +
-        '"sub":"123456789",' +
-        '"email":"test@test.com",' +
-        '"iat":' + now +
-      '}';
-    const envelope = '{' +
-        '"kid":"keyid",' +
-        '"alg":"RS256"' +
-      '}';
+    const idToken = Buffer.from(JSON.stringify({
+      iss: 'testissuer',
+      aud: 'testaudience',
+      azp: 'testauthorisedparty',
+      email_verified: 'true',
+      id: '123456789',
+      sub: '123456789',
+      email: 'test@test.com',
+      iat: now
+    })).toString('base64');
+    const envelope = Buffer.from(JSON.stringify({
+      kid: 'keyid',
+      alg: 'RS256'
+    })).toString('base64');
 
-    let data = new Buffer(envelope).toString('base64') +
-      '.' + new Buffer(idToken).toString('base64');
+    let data = `${envelope}.${idToken}`;
 
     const signer = crypto.createSign('sha256');
     signer.update(data);
     const signature = signer.sign(privateKey, 'base64');
 
-    data += '.' + signature;
+    data = `${data}.${signature}`;
 
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
@@ -528,29 +521,28 @@ describe('OAuth2 client', function() {
     const now = new Date().getTime() / 1000;
     const expiry = now + (maxLifetimeSecs / 2);
 
-    const idToken = '{' +
-        '"iss":"testissuer",' +
-        '"aud":"testaudience",' +
-        '"azp":"testauthorisedparty",' +
-        '"email_verified":"true",' +
-        '"id":"123456789",' +
-        '"sub":"123456789",' +
-        '"email":"test@test.com",' +
-        '"exp":' + expiry +
-      '}';
-    const envelope = '{' +
-        '"kid":"keyid",' +
-        '"alg":"RS256"' +
-      '}';
+    const idToken = Buffer.from(JSON.stringify({
+      iss: 'testissuer',
+      aud: 'testaudience',
+      azp: 'testauthorisedparty',
+      email_verified: 'true',
+      id: '123456789',
+      sub: '123456789',
+      email: 'test@test.com',
+      exp: expiry
+    })).toString('base64');
+    const envelope = Buffer.from(JSON.stringify({
+      kid: 'keyid',
+      alg: 'RS256'
+    })).toString('base64');
 
-    let data = new Buffer(envelope).toString('base64') +
-      '.' + new Buffer(idToken).toString('base64');
+    let data = `${envelope}.${idToken}`;
 
     const signer = crypto.createSign('sha256');
     signer.update(data);
     const signature = signer.sign(privateKey, 'base64');
 
-    data += '.' + signature;
+    data = `${data}.${signature}`;
 
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
@@ -577,30 +569,29 @@ describe('OAuth2 client', function() {
     const maxLifetimeSecs = 86400;
     const now = new Date().getTime() / 1000;
     const expiry = now + (2 * maxLifetimeSecs);
-    const idToken = '{' +
-        '"iss":"testissuer",' +
-        '"aud":"testaudience",' +
-        '"azp":"testauthorisedparty",' +
-        '"email_verified":"true",' +
-        '"id":"123456789",' +
-        '"sub":"123456789",' +
-        '"email":"test@test.com",' +
-        '"iat":' + now + ',' +
-        '"exp":' + expiry +
-      '}';
-    const envelope = '{' +
-        '"kid":"keyid",' +
-        '"alg":"RS256"' +
-      '}';
+    const idToken = Buffer.from(JSON.stringify({
+      iss: 'testissuer',
+      aud: 'testaudience',
+      azp: 'testauthorisedparty',
+      email_verified: 'true',
+      id: '123456789',
+      sub: '123456789',
+      email: 'test@test.com',
+      iat: now,
+      exp: expiry
+    })).toString('base64');
+    const envelope = Buffer.from(JSON.stringify({
+      kid: 'keyid',
+      alg: 'RS256'
+    })).toString('base64');
 
-    let data = new Buffer(envelope).toString('base64') +
-      '.' + new Buffer(idToken).toString('base64');
+    let data = `${envelope}.${idToken}`;
 
     const signer = crypto.createSign('sha256');
     signer.update(data);
     const signature = signer.sign(privateKey, 'base64');
 
-    data += '.' + signature;
+    data = `${data}.${signature}`;
 
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
@@ -628,30 +619,29 @@ describe('OAuth2 client', function() {
     const now = new Date().getTime() / 1000;
     const expiry = now + (2 * maxLifetimeSecs);
     const maxExpiry = (3 * maxLifetimeSecs);
-    const idToken = '{' +
-        '"iss":"testissuer",' +
-        '"aud":"testaudience",' +
-        '"azp":"testauthorisedparty",' +
-        '"email_verified":"true",' +
-        '"id":"123456789",' +
-        '"sub":"123456789",' +
-        '"email":"test@test.com",' +
-        '"iat":' + now + ',' +
-        '"exp":' + expiry +
-      '}';
-    const envelope = '{' +
-        '"kid":"keyid",' +
-        '"alg":"RS256"' +
-      '}';
+    const idToken = Buffer.from(JSON.stringify({
+      iss: 'testissuer',
+      aud: 'testaudience',
+      azp: 'testauthorisedparty',
+      email_verified: 'true',
+      id: '123456789',
+      sub: '123456789',
+      email: 'test@test.com',
+      iat: now,
+      exp: expiry
+    })).toString('base64');
+    const envelope = Buffer.from(JSON.stringify({
+      kid: 'keyid',
+      alg: 'RS256'
+    })).toString('base64');
 
-    let data = new Buffer(envelope).toString('base64') +
-      '.' + new Buffer(idToken).toString('base64');
+    let data = `${envelope}.${idToken}`;
 
     const signer = crypto.createSign('sha256');
     signer.update(data);
     const signature = signer.sign(privateKey, 'base64');
 
-    data += '.' + signature;
+    data = `${data}.${signature}`;
 
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
@@ -677,30 +667,29 @@ describe('OAuth2 client', function() {
     const now = (new Date().getTime() / 1000);
     const expiry = now + (maxLifetimeSecs / 2);
     const issueTime = now + (clockSkews * 2);
-    const idToken = '{' +
-        '"iss":"testissuer",' +
-        '"aud":"testaudience",' +
-        '"azp":"testauthorisedparty",' +
-        '"email_verified":"true",' +
-        '"id":"123456789",' +
-        '"sub":"123456789",' +
-        '"email":"test@test.com",' +
-        '"iat":' + issueTime + ',' +
-        '"exp":' + expiry +
-      '}';
-    const envelope = '{' +
-        '"kid":"keyid",' +
-        '"alg":"RS256"' +
-      '}';
+    const idToken = Buffer.from(JSON.stringify({
+      iss: 'testissuer',
+      aud: 'testaudience',
+      azp: 'testauthorisedparty',
+      email_verified: 'true',
+      id: '123456789',
+      sub: '123456789',
+      email: 'test@test.com',
+      iat: issueTime,
+      exp: expiry
+    })).toString('base64');
+    const envelope = Buffer.from(JSON.stringify({
+      kid: 'keyid',
+      alg: 'RS256'
+    })).toString('base64');
 
-    let data = new Buffer(envelope).toString('base64') +
-      '.' + new Buffer(idToken).toString('base64');
+    let data = `${envelope}.${idToken}`;
 
     const signer = crypto.createSign('sha256');
     signer.update(data);
     const signature = signer.sign(privateKey, 'base64');
 
-    data += '.' + signature;
+    data = `${data}.${signature}`;
 
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
@@ -729,30 +718,29 @@ describe('OAuth2 client', function() {
     const now = (new Date().getTime() / 1000);
     const expiry = now - (maxLifetimeSecs / 2);
     const issueTime = now - (clockSkews * 2);
-    const idToken = '{' +
-        '"iss":"testissuer",' +
-        '"aud":"testaudience",' +
-        '"azp":"testauthorisedparty",' +
-        '"email_verified":"true",' +
-        '"id":"123456789",' +
-        '"sub":"123456789",' +
-        '"email":"test@test.com",' +
-        '"iat":' + issueTime + ',' +
-        '"exp":' + expiry +
-      '}';
-    const envelope = '{' +
-        '"kid":"keyid",' +
-        '"alg":"RS256"' +
-      '}';
+    const idToken = Buffer.from(JSON.stringify({
+      iss: 'testissuer',
+      aud: 'testaudience',
+      azp: 'testauthorisedparty',
+      email_verified: 'true',
+      id: '123456789',
+      sub: '123456789',
+      email: 'test@test.com',
+      iat: issueTime,
+      exp: expiry
+    })).toString('base64');
+    const envelope = Buffer.from(JSON.stringify({
+      kid: 'keyid',
+      alg: 'RS256'
+    })).toString('base64');
 
-    let data = new Buffer(envelope).toString('base64') +
-      '.' + new Buffer(idToken).toString('base64');
+    let data = `${envelope}.${idToken}`;
 
     const signer = crypto.createSign('sha256');
     signer.update(data);
     const signature = signer.sign(privateKey, 'base64');
 
-    data += '.' + signature;
+    data = `${data}.${signature}`;
 
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
@@ -779,30 +767,29 @@ describe('OAuth2 client', function() {
     const maxLifetimeSecs = 86400;
     const now = (new Date().getTime() / 1000);
     const expiry = now + (maxLifetimeSecs / 2);
-    const idToken = '{' +
-        '"iss":"invalidissuer",' +
-        '"aud":"testaudience",' +
-        '"azp":"testauthorisedparty",' +
-        '"email_verified":"true",' +
-        '"id":"123456789",' +
-        '"sub":"123456789",' +
-        '"email":"test@test.com",' +
-        '"iat":' + now + ',' +
-        '"exp":' + expiry +
-      '}';
-    const envelope = '{' +
-        '"kid":"keyid",' +
-        '"alg":"RS256"' +
-      '}';
+    const idToken = Buffer.from(JSON.stringify({
+      iss: 'invalidissuer',
+      aud: 'testaudience',
+      azp: 'testauthorisedparty',
+      email_verified: 'true',
+      id: '123456789',
+      sub: '123456789',
+      email: 'test@test.com',
+      iat: now,
+      exp: expiry
+    })).toString('base64');
+    const envelope = Buffer.from(JSON.stringify({
+      kid: 'keyid',
+      alg: 'RS256'
+    })).toString('base64');
 
-    let data = new Buffer(envelope).toString('base64') +
-      '.' + new Buffer(idToken).toString('base64');
+    let data = `${envelope}.${idToken}`;
 
     const signer = crypto.createSign('sha256');
     signer.update(data);
     const signature = signer.sign(privateKey, 'base64');
 
-    data += '.' + signature;
+    data = `${data}.${signature}`;
 
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
@@ -830,30 +817,29 @@ describe('OAuth2 client', function() {
     const maxLifetimeSecs = 86400;
     const now = (new Date().getTime() / 1000);
     const expiry = now + (maxLifetimeSecs / 2);
-    const idToken = '{' +
-        '"iss":"testissuer",' +
-        '"aud":"testaudience",' +
-        '"azp":"testauthorisedparty",' +
-        '"email_verified":"true",' +
-        '"id":"123456789",' +
-        '"sub":"123456789",' +
-        '"email":"test@test.com",' +
-        '"iat":' + now + ',' +
-        '"exp":' + expiry +
-      '}';
-    const envelope = '{' +
-        '"kid":"keyid",' +
-        '"alg":"RS256"' +
-      '}';
+    const idToken = Buffer.from(JSON.stringify({
+      iss: 'testissuer',
+      aud: 'testaudience',
+      azp: 'testauthorisedparty',
+      email_verified: 'true',
+      id: '123456789',
+      sub: '123456789',
+      email: 'test@test.com',
+      iat: now,
+      exp: expiry
+    })).toString('base64');
+    const envelope = Buffer.from(JSON.stringify({
+      kid: 'keyid',
+      alg: 'RS256'
+    })).toString('base64');
 
-    let data = new Buffer(envelope).toString('base64') +
-      '.' + new Buffer(idToken).toString('base64');
+    let data = `${envelope}.${idToken}`;
 
     const signer = crypto.createSign('sha256');
     signer.update(data);
     const signature = signer.sign(privateKey, 'base64');
 
-    data += '.' + signature;
+    data = `${data}.${signature}`;
 
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
@@ -870,7 +856,7 @@ describe('OAuth2 client', function() {
   it('should be able to retrieve a list of Google certificates', function(done) {
     const scope = nock('https://www.googleapis.com')
       .get('/oauth2/v1/certs')
-      .replyWithFile(200, __dirname + '/fixtures/oauthcerts.json');
+      .replyWithFile(200, `${__dirname}/fixtures/oauthcerts.json`);
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     oauth2client.getFederatedSignonCerts(function(err, certs) {
@@ -891,7 +877,7 @@ describe('OAuth2 client', function() {
           })
           .get('/oauth2/v1/certs')
           .once()
-          .replyWithFile(200, __dirname + '/fixtures/oauthcerts.json');
+          .replyWithFile(200, `${__dirname}/fixtures/oauthcerts.json`);
       const auth = new GoogleAuth();
       const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
       oauth2client.getFederatedSignonCerts(function(err, certs) {

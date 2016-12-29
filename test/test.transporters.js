@@ -39,13 +39,13 @@ describe('Transporters', function() {
     const opts = transporter.configure({
       headers: { 'User-Agent': applicationName }
     });
-    const re = new RegExp(applicationName + ' ' + defaultUserAgentRE);
+    const re = new RegExp(`${applicationName} ${defaultUserAgentRE}`);
     assert(re.test(opts.headers['User-Agent']));
   });
 
   it('should not append default client user agent to the existing user ' +
       'agent more than once', function() {
-    const applicationName = 'MyTestApplication-1.0 google-api-nodejs-client/' + version;
+    const applicationName = `MyTestApplication-1.0 google-api-nodejs-client/${version}`;
     const opts = transporter.configure({
       headers: { 'User-Agent': applicationName }
     });
