@@ -27,7 +27,7 @@ const AuthClient = require('../lib/auth/authclient.js');
 
 nock.disableNetConnect();
 
-describe('OAuth2 client', function() {
+describe('OAuth2 client', () => {
 
   const CLIENT_ID = 'CLIENT_ID';
   const CLIENT_SECRET = 'CLIENT_SECRET';
@@ -36,7 +36,7 @@ describe('OAuth2 client', function() {
   const SCOPE = 'scopex';
   const SCOPE_ARRAY = ['scopex', 'scopey'];
 
-  it('should generate a valid consent page url', function(done) {
+  it('should generate a valid consent page url', (done) => {
     const opts = {
       access_type: ACCESS_TYPE,
       scope: SCOPE,
@@ -57,14 +57,14 @@ describe('OAuth2 client', function() {
     done();
   });
 
-  it('should throw if using AuthClient directly', function() {
+  it('should throw if using AuthClient directly', () => {
     const authClient = new AuthClient();
-    assert.throws(function() {
+    assert.throws(() => {
       authClient.request();
     }, 'Not implemented yet.');
   });
 
-  it('should allow scopes to be specified as array', function(done) {
+  it('should allow scopes to be specified as array', (done) => {
     const opts = {
       access_type: ACCESS_TYPE,
       scope: SCOPE_ARRAY,
@@ -82,7 +82,7 @@ describe('OAuth2 client', function() {
   });
 
   it('should set response_type param to code if none is given while' +
-      'generating the consent page url', function(done) {
+      'generating the consent page url', (done) => {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     const generated = oauth2client.generateAuthUrl();
@@ -95,11 +95,11 @@ describe('OAuth2 client', function() {
 
   // jason: keep
   /*
-  it('should return err no access or refresh token is set before making a request', function(done) {
+  it('should return err no access or refresh token is set before making a request', (done) => {
     const auth = new GoogleAuth();
     const oauth2client = new googleapis.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     new googleapis.GoogleApis()
-      .urlshortener('v1').url.get({ shortUrl: '123', auth: oauth2client }, function(err, result) {
+      .urlshortener('v1').url.get({ shortUrl: '123', auth: oauth2client }, (err, result) => {
         assert.equal(err.message, 'No access or refresh token is set.');
         assert.equal(result, null);
         done();
@@ -107,17 +107,17 @@ describe('OAuth2 client', function() {
   });
 
 
-  it('should not throw any exceptions if only refresh token is set', function() {
+  it('should not throw any exceptions if only refresh token is set', () => {
     const oauth2client = new googleapis.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     oauth2client.credentials = { refresh_token: 'refresh_token' };
-    assert.doesNotThrow(function() {
+    assert.doesNotThrow(() => {
       const google = new googleapis.GoogleApis();
       const options = { auth: oauth2client, shortUrl: '...' };
       google.urlshortener('v1').url.get(options, noop);
     });
   });
 
-  it('should set access token type to Bearer if none is set', function(done) {
+  it('should set access token type to Bearer if none is set', (done) => {
     const oauth2client = new googleapis.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     oauth2client.credentials = { access_token: 'foo', refresh_token: '' };
 
@@ -125,7 +125,7 @@ describe('OAuth2 client', function() {
 
     const google = new googleapis.GoogleApis();
     const urlshortener = google.urlshortener('v1');
-    urlshortener.url.list({ auth: oauth2client }, function(err) {
+    urlshortener.url.list({ auth: oauth2client }, (err) => {
       assert.equal(oauth2client.credentials.token_type, 'Bearer');
       scope.done();
       done(err);
@@ -133,7 +133,7 @@ describe('OAuth2 client', function() {
   });
 */
 
-  it('should verify a valid certificate against a jwt', function(done) {
+  it('should verify a valid certificate against a jwt', (done) => {
     const publicKey = fs.readFileSync('./test/fixtures/public.pem', 'utf-8');
     const privateKey = fs.readFileSync('./test/fixtures/private.pem', 'utf-8');
 
@@ -177,7 +177,7 @@ describe('OAuth2 client', function() {
     done();
   });
 
-  it('should fail due to invalid audience', function(done) {
+  it('should fail due to invalid audience', (done) => {
     const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
     const privateKey = fs.readFileSync('./test/fixtures/private.pem',
@@ -214,7 +214,7 @@ describe('OAuth2 client', function() {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
-      function() {
+      () => {
         oauth2client.verifySignedJwtWithCerts(
           data,
           {keyid: publicKey},
@@ -226,7 +226,7 @@ describe('OAuth2 client', function() {
     done();
   });
 
-  it('should fail due to invalid array of audiences', function(done) {
+  it('should fail due to invalid array of audiences', (done) => {
     const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
     const privateKey = fs.readFileSync('./test/fixtures/private.pem',
@@ -264,7 +264,7 @@ describe('OAuth2 client', function() {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
-      function() {
+      () => {
         oauth2client.verifySignedJwtWithCerts(
           data,
           {keyid: publicKey},
@@ -276,7 +276,7 @@ describe('OAuth2 client', function() {
     done();
   });
 
-  it('should fail due to invalid signature', function(done) {
+  it('should fail due to invalid signature', (done) => {
     const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
     const privateKey = fs.readFileSync('./test/fixtures/private.pem',
@@ -310,7 +310,7 @@ describe('OAuth2 client', function() {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
-      function() {
+      () => {
         oauth2client.verifySignedJwtWithCerts(
           data,
           {keyid: publicKey},
@@ -323,7 +323,7 @@ describe('OAuth2 client', function() {
     done();
   });
 
-  it('should fail due to invalid envelope', function(done) {
+  it('should fail due to invalid envelope', (done) => {
     const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
     const privateKey = fs.readFileSync('./test/fixtures/private.pem',
@@ -358,7 +358,7 @@ describe('OAuth2 client', function() {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
-      function() {
+      () => {
         oauth2client.verifySignedJwtWithCerts(
           data,
           {keyid: publicKey},
@@ -371,7 +371,7 @@ describe('OAuth2 client', function() {
     done();
   });
 
-  it('should fail due to invalid payload', function(done) {
+  it('should fail due to invalid payload', (done) => {
     const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
     const privateKey = fs.readFileSync('./test/fixtures/private.pem',
@@ -409,7 +409,7 @@ describe('OAuth2 client', function() {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
-      function() {
+      () => {
         oauth2client.verifySignedJwtWithCerts(
           data,
           {keyid: publicKey},
@@ -422,7 +422,7 @@ describe('OAuth2 client', function() {
     done();
   });
 
-  it('should fail due to invalid signature', function(done) {
+  it('should fail due to invalid signature', (done) => {
     const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
 
@@ -451,7 +451,7 @@ describe('OAuth2 client', function() {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
-      function() {
+      () => {
         oauth2client.verifySignedJwtWithCerts(
           data,
           {keyid: publicKey},
@@ -464,7 +464,7 @@ describe('OAuth2 client', function() {
     done();
   });
 
-  it('should fail due to no expiration date', function(done) {
+  it('should fail due to no expiration date', (done) => {
     const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
     const privateKey = fs.readFileSync('./test/fixtures/private.pem',
@@ -498,7 +498,7 @@ describe('OAuth2 client', function() {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
-      function() {
+      () => {
         oauth2client.verifySignedJwtWithCerts(
           data,
           {keyid: publicKey},
@@ -511,7 +511,7 @@ describe('OAuth2 client', function() {
     done();
   });
 
-  it('should fail due to no issue time', function(done) {
+  it('should fail due to no issue time', (done) => {
     const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
     const privateKey = fs.readFileSync('./test/fixtures/private.pem',
@@ -547,7 +547,7 @@ describe('OAuth2 client', function() {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
-      function() {
+      () => {
         oauth2client.verifySignedJwtWithCerts(
           data,
           {keyid: publicKey},
@@ -560,7 +560,7 @@ describe('OAuth2 client', function() {
     done();
   });
 
-  it('should fail due to certificate with expiration date in future', function(done) {
+  it('should fail due to certificate with expiration date in future', (done) => {
     const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
     const privateKey = fs.readFileSync('./test/fixtures/private.pem',
@@ -596,7 +596,7 @@ describe('OAuth2 client', function() {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
-      function() {
+      () => {
         oauth2client.verifySignedJwtWithCerts(
           data,
           {keyid: publicKey},
@@ -609,7 +609,7 @@ describe('OAuth2 client', function() {
     done();
   });
 
-  it('should pass due to expiration date in future with adjusted max expiry', function(done) {
+  it('should pass due to expiration date in future with adjusted max expiry', (done) => {
     const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
     const privateKey = fs.readFileSync('./test/fixtures/private.pem',
@@ -656,7 +656,7 @@ describe('OAuth2 client', function() {
     done();
   });
 
-  it('should fail due to token being used to early', function(done) {
+  it('should fail due to token being used to early', (done) => {
     const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
     const privateKey = fs.readFileSync('./test/fixtures/private.pem',
@@ -694,7 +694,7 @@ describe('OAuth2 client', function() {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
-      function() {
+      () => {
         oauth2client.verifySignedJwtWithCerts(
           data,
           {keyid: publicKey},
@@ -707,7 +707,7 @@ describe('OAuth2 client', function() {
     done();
   });
 
-  it('should fail due to token being used to late', function(done) {
+  it('should fail due to token being used to late', (done) => {
     const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
     const privateKey = fs.readFileSync('./test/fixtures/private.pem',
@@ -745,7 +745,7 @@ describe('OAuth2 client', function() {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
-      function() {
+      () => {
         oauth2client.verifySignedJwtWithCerts(
           data,
           {keyid: publicKey},
@@ -758,7 +758,7 @@ describe('OAuth2 client', function() {
     done();
   });
 
-  it('should fail due to invalid issuer', function(done) {
+  it('should fail due to invalid issuer', (done) => {
     const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
     const privateKey = fs.readFileSync('./test/fixtures/private.pem',
@@ -794,7 +794,7 @@ describe('OAuth2 client', function() {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
-      function() {
+      () => {
         oauth2client.verifySignedJwtWithCerts(
           data,
           {keyid: publicKey},
@@ -808,7 +808,7 @@ describe('OAuth2 client', function() {
     done();
   });
 
-  it('should pass due to valid issuer', function(done) {
+  it('should pass due to valid issuer', (done) => {
     const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
     const privateKey = fs.readFileSync('./test/fixtures/private.pem',
@@ -853,13 +853,13 @@ describe('OAuth2 client', function() {
     done();
   });
 
-  it('should be able to retrieve a list of Google certificates', function(done) {
+  it('should be able to retrieve a list of Google certificates', (done) => {
     const scope = nock('https://www.googleapis.com')
       .get('/oauth2/v1/certs')
       .replyWithFile(200, `${__dirname}/fixtures/oauthcerts.json`);
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-    oauth2client.getFederatedSignonCerts(function(err, certs) {
+    oauth2client.getFederatedSignonCerts((err, certs) => {
       assert.equal(err, null);
       assert.equal(Object.keys(certs).length, 2);
       assert.notEqual(certs.a15eea964ab9cce480e5ef4f47cb17b9fa7d0b21, null);
@@ -869,7 +869,7 @@ describe('OAuth2 client', function() {
     });
   });
 
-  it('should be able to retrieve a list of Google certificates from cache again', function(done) {
+  it('should be able to retrieve a list of Google certificates from cache again', (done) => {
       const scope = nock('https://www.googleapis.com')
           .defaultReplyHeaders({
             'Cache-Control': 'public, max-age=23641, must-revalidate, no-transform',
@@ -880,11 +880,11 @@ describe('OAuth2 client', function() {
           .replyWithFile(200, `${__dirname}/fixtures/oauthcerts.json`);
       const auth = new GoogleAuth();
       const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-      oauth2client.getFederatedSignonCerts(function(err, certs) {
+      oauth2client.getFederatedSignonCerts((err, certs) => {
         assert.equal(err, null);
         assert.equal(Object.keys(certs).length, 2);
         scope.done(); // has retrieved from nock... nock no longer will reply
-        oauth2client.getFederatedSignonCerts(function(err, certs) {
+        oauth2client.getFederatedSignonCerts((err, certs) => {
           assert.equal(err, null);
           assert.equal(Object.keys(certs).length, 2);
           scope.done();
@@ -894,7 +894,7 @@ describe('OAuth2 client', function() {
     );
   });
 
-  it('should set redirect_uri if not provided in options', function() {
+  it('should set redirect_uri if not provided in options', () => {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     const generated = oauth2client.generateAuthUrl({});
@@ -903,7 +903,7 @@ describe('OAuth2 client', function() {
     assert.equal(query.redirect_uri, REDIRECT_URI);
   });
 
-  it('should set client_id if not provided in options', function() {
+  it('should set client_id if not provided in options', () => {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     const generated = oauth2client.generateAuthUrl({});
@@ -912,7 +912,7 @@ describe('OAuth2 client', function() {
     assert.equal(query.client_id, CLIENT_ID);
   });
 
-  it('should override redirect_uri if provided in options', function() {
+  it('should override redirect_uri if provided in options', () => {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     const generated = oauth2client.generateAuthUrl({ redirect_uri: 'overridden' });
@@ -921,7 +921,7 @@ describe('OAuth2 client', function() {
     assert.equal(query.redirect_uri, 'overridden');
   });
 
-  it('should override client_id if provided in options', function() {
+  it('should override client_id if provided in options', () => {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     const generated = oauth2client.generateAuthUrl({ client_id: 'client_override' });
@@ -930,30 +930,30 @@ describe('OAuth2 client', function() {
     assert.equal(query.client_id, 'client_override');
   });
 
-  it('should return error in callback on request', function(done) {
+  it('should return error in callback on request', (done) => {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-    oauth2client.request({}, function(err, result) {
+    oauth2client.request({}, (err, result) => {
       assert.equal(err.message, 'No access or refresh token is set.');
       assert.equal(result, null);
       done();
     });
   });
 
-  it('should return error in callback on refreshAccessToken', function(done) {
+  it('should return error in callback on refreshAccessToken', (done) => {
     const auth = new GoogleAuth();
     const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-    oauth2client.refreshAccessToken(function(err, result) {
+    oauth2client.refreshAccessToken((err, result) => {
       assert.equal(err.message, 'No refresh token is set.');
       assert.equal(result, null);
       done();
     });
   });
 
-  describe('request()', function() {
+  describe('request()', () => {
     let scope;
 
-    beforeEach(function() {
+    beforeEach(() => {
       scope = nock('https://accounts.google.com')
           .post('/o/oauth2/token')
           .reply(200, { access_token: 'abc123', expires_in: 1 });
@@ -963,11 +963,11 @@ describe('OAuth2 client', function() {
           .reply(200);
     });
 
-    afterEach(function() {
+    afterEach(() => {
       nock.cleanAll();
     });
 
-    it('should refresh token if missing access token', function(done) {
+    it('should refresh token if missing access token', (done) => {
       const auth = new GoogleAuth();
       const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
@@ -975,13 +975,13 @@ describe('OAuth2 client', function() {
         refresh_token: 'refresh-token-placeholder'
       };
 
-      oauth2client.request({ uri : 'http://example.com' }, function() {
+      oauth2client.request({ uri : 'http://example.com' }, () => {
         assert.equal('abc123', oauth2client.credentials.access_token);
         done();
       });
     });
 
-    it('should refresh if access token is expired', function(done) {
+    it('should refresh if access token is expired', (done) => {
       const auth = new GoogleAuth();
       const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
@@ -991,13 +991,13 @@ describe('OAuth2 client', function() {
         expiry_date: (new Date()).getTime() - 1000
       };
 
-      oauth2client.request({ uri : 'http://example.com' }, function() {
+      oauth2client.request({ uri : 'http://example.com' }, () => {
         assert.equal('abc123', oauth2client.credentials.access_token);
         done();
       });
     });
 
-    it('should not refresh if not expired', function(done) {
+    it('should not refresh if not expired', (done) => {
       const auth = new GoogleAuth();
       const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
@@ -1007,14 +1007,14 @@ describe('OAuth2 client', function() {
         expiry_date: (new Date()).getTime() + 1000
       };
 
-      oauth2client.request({ uri : 'http://example.com' }, function() {
+      oauth2client.request({ uri : 'http://example.com' }, () => {
         assert.equal('initial-access-token', oauth2client.credentials.access_token);
         assert.equal(false, scope.isDone());
         done();
       });
     });
 
-    it('should assume access token is not expired', function(done) {
+    it('should assume access token is not expired', (done) => {
       const auth = new GoogleAuth();
       const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
@@ -1023,15 +1023,15 @@ describe('OAuth2 client', function() {
         refresh_token: 'refresh-token-placeholder'
       };
 
-      oauth2client.request({ uri : 'http://example.com' }, function() {
+      oauth2client.request({ uri : 'http://example.com' }, () => {
         assert.equal('initial-access-token', oauth2client.credentials.access_token);
         assert.equal(false, scope.isDone());
         done();
       });
     });
 
-    [401, 403].forEach(function(statusCode) {
-      it('should refresh token if the server returns ' + statusCode, function(done) {
+    [401, 403].forEach((statusCode) => {
+      it(`should refresh token if the server returns ${statusCode}`, (done) => {
         nock('http://example.com')
             .get('/access')
             .reply(statusCode, {
@@ -1049,7 +1049,7 @@ describe('OAuth2 client', function() {
           refresh_token: 'refresh-token-placeholder'
         };
 
-        oauth2client.request({ uri : 'http://example.com/access' }, function() {
+        oauth2client.request({ uri : 'http://example.com/access' }, () => {
           assert.equal('abc123', oauth2client.credentials.access_token);
           done();
         });
@@ -1057,15 +1057,15 @@ describe('OAuth2 client', function() {
     });
   });
 
-  describe('revokeCredentials()', function() {
-    it('should revoke credentials if access token present', function(done) {
+  describe('revokeCredentials()', () => {
+    it('should revoke credentials if access token present', (done) => {
       const scope = nock('https://accounts.google.com')
           .get('/o/oauth2/revoke?token=abc')
           .reply(200, { success: true });
       const auth = new GoogleAuth();
       const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
       oauth2client.credentials = { access_token: 'abc', refresh_token: 'abc' };
-      oauth2client.revokeCredentials(function(err, result) {
+      oauth2client.revokeCredentials((err, result) => {
         assert.equal(err, null);
         assert.equal(result.success, true);
         assert.equal(JSON.stringify(oauth2client.credentials), '{}');
@@ -1074,11 +1074,11 @@ describe('OAuth2 client', function() {
       });
     });
 
-    it('should clear credentials and return error if no access token to revoke', function(done) {
+    it('should clear credentials and return error if no access token to revoke', (done) => {
       const auth = new GoogleAuth();
       const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
       oauth2client.credentials = { refresh_token: 'abc' };
-      oauth2client.revokeCredentials(function(err, result) {
+      oauth2client.revokeCredentials((err, result) => {
         assert.equal(err.message, 'No access token to revoke.');
         assert.equal(result, null);
         assert.equal(JSON.stringify(oauth2client.credentials), '{}');
@@ -1087,15 +1087,15 @@ describe('OAuth2 client', function() {
     });
   });
 
-  describe('getToken()', function() {
-    it('should return expiry_date', function(done) {
+  describe('getToken()', () => {
+    it('should return expiry_date', (done) => {
       const now = (new Date()).getTime();
       const scope = nock('https://accounts.google.com')
           .post('/o/oauth2/token')
           .reply(200, { access_token: 'abc', refresh_token: '123', expires_in: 10 });
       const auth = new GoogleAuth();
       const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-      oauth2client.getToken('code here', function(err, tokens) {
+      oauth2client.getToken('code here', (err, tokens) => {
         assert(tokens.expiry_date >= now + (10 * 1000));
         assert(tokens.expiry_date <= now + (15 * 1000));
         scope.done();

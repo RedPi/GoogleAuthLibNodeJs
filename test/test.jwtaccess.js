@@ -26,17 +26,17 @@ const jws = require('jws');
 // Creates a standard JSON credentials object for testing.
 function createJSON() {
   return {
-    'private_key_id': 'key123',
-    'private_key': 'privatekey',
-    'client_email': 'hello@youarecool.com',
-    'client_id': 'client123',
-    'type': 'service_account'
+    private_key_id: 'key123',
+    private_key: 'privatekey',
+    client_email: 'hello@youarecool.com',
+    client_id: 'client123',
+    type: 'service_account'
   };
 }
 
-describe('.getRequestMetadata', function() {
+describe('.getRequestMetadata', () => {
 
-  it('create a signed JWT token as the access token', function(done) {
+  it('create a signed JWT token as the access token', (done) => {
     const keys = keypair(1024 /* bitsize of private key */);
     const testUri = 'http:/example.com/my_test_service';
     const email = 'foo@serviceaccount.com';
@@ -44,7 +44,7 @@ describe('.getRequestMetadata', function() {
     const client = new auth.JWTAccess(email, keys['private']);
 
     const retValue = 'dummy';
-    const expectAuth = function(err, creds) {
+    const expectAuth = (err, creds) => {
       assert.strictEqual(null, err, `no error was expected: got\n${err}`);
       assert.notStrictEqual(null, creds, 'an creds object should be present');
       const decoded = jws.decode(creds.Authorization.replace('Bearer ', ''));
@@ -60,9 +60,9 @@ describe('.getRequestMetadata', function() {
 
 });
 
-describe('.createScopedRequired', function() {
+describe('.createScopedRequired', () => {
 
-  it('should return false', function () {
+  it('should return false', () => {
     const auth = new GoogleAuth();
     const client = new auth.JWTAccess(
       'foo@serviceaccount.com',
@@ -73,57 +73,57 @@ describe('.createScopedRequired', function() {
 
 });
 
-describe('.fromJson', function () {
+describe('.fromJson', () => {
   // set up the test json and the client instance being tested.
   let json, client;
-  beforeEach(function() {
+  beforeEach(() => {
     json = createJSON();
     const auth = new GoogleAuth();
     client = new auth.JWTAccess();
   });
 
-  it('should error on null json', function (done) {
-    client.fromJSON(null, function (err) {
+  it('should error on null json', (done) => {
+    client.fromJSON(null, (err) => {
       assert.equal(true, err instanceof Error);
       done();
     });
   });
 
-  it('should error on empty json', function (done) {
-    client.fromJSON({}, function (err) {
+  it('should error on empty json', (done) => {
+    client.fromJSON({}, (err) => {
       assert.equal(true, err instanceof Error);
       done();
     });
   });
 
-  it('should error on missing client_email', function (done) {
+  it('should error on missing client_email', (done) => {
     delete json.client_email;
 
-    client.fromJSON(json, function (err) {
+    client.fromJSON(json, (err) => {
       assert.equal(true, err instanceof Error);
       done();
     });
   });
 
-  it('should error on missing private_key', function (done) {
+  it('should error on missing private_key', (done) => {
     delete json.private_key;
 
-    client.fromJSON(json, function (err) {
+    client.fromJSON(json, (err) => {
       assert.equal(true, err instanceof Error);
       done();
     });
   });
 
-  it('should create JWT with client_email', function (done) {
-    client.fromJSON(json, function (err) {
+  it('should create JWT with client_email', (done) => {
+    client.fromJSON(json, (err) => {
       assert.equal(null, err);
       assert.equal(json.client_email, client.email);
       done();
     });
   });
 
-  it('should create JWT with private_key', function (done) {
-    client.fromJSON(json, function (err) {
+  it('should create JWT with private_key', (done) => {
+    client.fromJSON(json, (err) => {
       assert.equal(null, err);
       assert.equal(json.private_key, client.key);
       done();
@@ -132,22 +132,22 @@ describe('.fromJson', function () {
 
 });
 
-describe('.fromStream', function () {
+describe('.fromStream', () => {
   // set up the client instance being tested.
   let client;
-  beforeEach(function() {
+  beforeEach(() => {
     const auth = new GoogleAuth();
     client = new auth.JWTAccess();
   });
 
-  it('should error on null stream', function (done) {
-    client.fromStream(null, function (err) {
+  it('should error on null stream', (done) => {
+    client.fromStream(null, (err) => {
       assert.equal(true, err instanceof Error);
       done();
     });
   });
 
-  it('should construct a JWT Header instance from a stream', function (done) {
+  it('should construct a JWT Header instance from a stream', (done) => {
     // Read the contents of the file into a json object.
     const fileContents = fs.readFileSync('./test/fixtures/private.json', 'utf-8');
     const json = JSON.parse(fileContents);
@@ -156,7 +156,7 @@ describe('.fromStream', function () {
     const stream = fs.createReadStream('./test/fixtures/private.json');
 
     // And pass it into the fromStream method.
-    client.fromStream(stream, function (err) {
+    client.fromStream(stream, (err) => {
       assert.equal(null, err);
 
       // Ensure that the correct bits were pulled from the stream.

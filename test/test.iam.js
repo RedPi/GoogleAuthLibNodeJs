@@ -19,17 +19,17 @@
 const assert = require('assert');
 const GoogleAuth = require('../lib/auth/googleauth.js');
 
-describe('.getRequestMetadata', function() {
+describe('.getRequestMetadata', () => {
   const test_selector = 'a-test-selector';
   const test_token = 'a-test-token';
   let client;
-  beforeEach(function() {
+  beforeEach(() => {
     const auth = new GoogleAuth();
     client = new auth.IAMAuth(test_selector, test_token);
   });
 
-  it('passes the token and selector to the callback ', function(done) {
-    const expect_request_metadata = function(err, creds) {
+  it('passes the token and selector to the callback ', (done) => {
+    const expect_request_metadata = (err, creds) => {
       assert.strictEqual(err, null, `no error was expected: got\n${err}`);
       assert.notStrictEqual(creds, null,
                             'metadata should be present');
@@ -42,5 +42,4 @@ describe('.getRequestMetadata', function() {
     const unusedUri = null;
     client.getRequestMetadata(unusedUri, expect_request_metadata);
   });
-
 });

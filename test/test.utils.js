@@ -19,16 +19,14 @@
 const assert = require('assert');
 const utils = require('../lib/utils.js');
 
-describe('Utils', function() {
-
-  it('should not extend functions on the prototype', function() {
-
+describe('Utils', () => {
+  it('should not extend functions on the prototype', () => {
     const object = {
       property: 'test'
     };
 
     /* jshint ignore:start */
-    Object.prototype.entries = function() {};
+    Object.prototype.entries = () => {};
     /* jshint ignore:end */
 
     const newObject = utils.extend({}, object);
@@ -41,5 +39,4 @@ describe('Utils', function() {
 
     delete Object.prototype.entries;
   });
-
 });

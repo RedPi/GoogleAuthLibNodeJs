@@ -65,7 +65,7 @@ const GoogleAuth = require('google-auth-library');
 const authFactory = new GoogleAuth();
 const dns = google.dns('v1');
 
-authFactory.getApplicationDefault(function(err, authClient) {
+authFactory.getApplicationDefault((err, authClient) => {
   if (err) {
     console.log('Authentication failed because of ', err);
     return;
@@ -88,7 +88,7 @@ authFactory.getApplicationDefault(function(err, authClient) {
     auth: authClient
   };
 
-  dns.changes.get(request, function(err, result) {
+  dns.changes.get(request, (err, result) => {
     if (err) {
       console.log(err);
     } else {

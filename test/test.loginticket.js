@@ -19,25 +19,22 @@
 const assert = require('assert');
 const LoginTicket = require('../lib/auth/loginticket.js');
 
-describe('LoginTicket', function() {
-
-  it('should return null userId even if no payload', function() {
+describe('LoginTicket', () => {
+  it('should return null userId even if no payload', () => {
     const ticket = new LoginTicket(null, null);
     assert.equal(ticket.getUserId(), null);
   });
 
-  it('should return envelope', function() {
+  it('should return envelope', () => {
     const ticket = new LoginTicket('myenvelope');
     assert.equal(ticket.getEnvelope(), 'myenvelope');
   });
 
-  it('should return attributes from getAttributes', function() {
+  it('should return attributes from getAttributes', () => {
     const ticket = new LoginTicket('myenvelope', 'mypayload');
     assert.deepEqual(ticket.getAttributes(), {
       envelope: 'myenvelope',
       payload: 'mypayload'
     });
-
   });
-
 });

@@ -23,18 +23,18 @@ const version = require('../package.json').version;
 
 nock.disableNetConnect();
 
-describe('Transporters', function() {
+describe('Transporters', () => {
 
   const defaultUserAgentRE = 'google-api-nodejs-client/\\d+.\\d+.\\d+';
   const transporter = new DefaultTransporter();
 
-  it('should set default client user agent if none is set', function() {
+  it('should set default client user agent if none is set', () => {
     const opts = transporter.configure({});
     const re = new RegExp(defaultUserAgentRE);
     assert(re.test(opts.headers['User-Agent']));
   });
 
-  it('should append default client user agent to the existing user agent', function() {
+  it('should append default client user agent to the existing user agent', () => {
     const applicationName = 'MyTestApplication-1.0';
     const opts = transporter.configure({
       headers: { 'User-Agent': applicationName }
@@ -44,7 +44,7 @@ describe('Transporters', function() {
   });
 
   it('should not append default client user agent to the existing user ' +
-      'agent more than once', function() {
+      'agent more than once', () => {
     const applicationName = `MyTestApplication-1.0 google-api-nodejs-client/${version}`;
     const opts = transporter.configure({
       headers: { 'User-Agent': applicationName }
@@ -52,7 +52,7 @@ describe('Transporters', function() {
     assert.equal(opts.headers['User-Agent'], applicationName);
   });
 
-  it('should create a single error from multiple response errors', function(done) {
+  it('should create a single error from multiple response errors', (done) => {
     const firstError = {
       message: 'Error 1'
     };
@@ -70,7 +70,7 @@ describe('Transporters', function() {
 
     transporter.request({
       uri: 'http://example.com/api',
-    }, function(error) {
+    }, (error) => {
       assert(error.message === 'Error 1\nError 2');
       assert(error.code, 500);
       assert(error.errors.length, 2);
