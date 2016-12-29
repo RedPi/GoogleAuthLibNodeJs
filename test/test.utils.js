@@ -16,14 +16,14 @@
 
 'use strict';
 
-var assert = require('assert');
-var utils = require('../lib/utils.js');
+const assert = require('assert');
+const utils = require('../lib/utils.js');
 
 describe('Utils', function() {
 
   it('should not extend functions on the prototype', function() {
 
-    var object = {
+    const object = {
       property: 'test'
     };
 
@@ -31,7 +31,7 @@ describe('Utils', function() {
     Object.prototype.entries = function() {};
     /* jshint ignore:end */
 
-    var newObject = utils.extend({}, object);
+    const newObject = utils.extend({}, object);
 
     assert.equal('entries' in newObject, true);
     assert.equal(newObject.hasOwnProperty('entries'), false);

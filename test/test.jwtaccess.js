@@ -16,11 +16,11 @@
 
 'use strict';
 
-var assert = require('assert');
-var fs = require('fs');
-var GoogleAuth = require('../lib/auth/googleauth.js');
-var keypair = require('keypair');
-var jws = require('jws');
+const assert = require('assert');
+const fs = require('fs');
+const GoogleAuth = require('../lib/auth/googleauth.js');
+const keypair = require('keypair');
+const jws = require('jws');
 
 
 // Creates a standard JSON credentials object for testing.
@@ -37,24 +37,24 @@ function createJSON() {
 describe('.getRequestMetadata', function() {
 
   it('create a signed JWT token as the access token', function(done) {
-    var keys = keypair(1024 /* bitsize of private key */);
-    var testUri = 'http:/example.com/my_test_service';
-    var email = 'foo@serviceaccount.com';
-    var auth = new GoogleAuth();
-    var client = new auth.JWTAccess(email, keys['private']);
+    const keys = keypair(1024 /* bitsize of private key */);
+    const testUri = 'http:/example.com/my_test_service';
+    const email = 'foo@serviceaccount.com';
+    const auth = new GoogleAuth();
+    const client = new auth.JWTAccess(email, keys['private']);
 
-    var retValue = 'dummy';
-    var expectAuth = function(err, creds) {
+    const retValue = 'dummy';
+    const expectAuth = function(err, creds) {
       assert.strictEqual(null, err, 'no error was expected: got\n' + err);
       assert.notStrictEqual(null, creds, 'an creds object should be present');
-      var decoded = jws.decode(creds.Authorization.replace('Bearer ', ''));
+      const decoded = jws.decode(creds.Authorization.replace('Bearer ', ''));
       assert.strictEqual(email, decoded.payload.iss);
       assert.strictEqual(email, decoded.payload.sub);
       assert.strictEqual(testUri, decoded.payload.aud);
       done();
       return retValue;
     };
-    var res = client.getRequestMetadata(testUri, expectAuth);
+    const res = client.getRequestMetadata(testUri, expectAuth);
     assert.strictEqual(res, retValue);
   });
 
@@ -63,8 +63,8 @@ describe('.getRequestMetadata', function() {
 describe('.createScopedRequired', function() {
 
   it('should return false', function () {
-    var auth = new GoogleAuth();
-    var client = new auth.JWTAccess(
+    const auth = new GoogleAuth();
+    const client = new auth.JWTAccess(
       'foo@serviceaccount.com',
       null);
 
@@ -75,10 +75,10 @@ describe('.createScopedRequired', function() {
 
 describe('.fromJson', function () {
   // set up the test json and the client instance being tested.
-  var json, client;
+  let json, client;
   beforeEach(function() {
     json = createJSON();
-    var auth = new GoogleAuth();
+    const auth = new GoogleAuth();
     client = new auth.JWTAccess();
   });
 
@@ -134,9 +134,9 @@ describe('.fromJson', function () {
 
 describe('.fromStream', function () {
   // set up the client instance being tested.
-  var client;
+  let client;
   beforeEach(function() {
-    var auth = new GoogleAuth();
+    const auth = new GoogleAuth();
     client = new auth.JWTAccess();
   });
 
@@ -149,11 +149,11 @@ describe('.fromStream', function () {
 
   it('should construct a JWT Header instance from a stream', function (done) {
     // Read the contents of the file into a json object.
-    var fileContents = fs.readFileSync('./test/fixtures/private.json', 'utf-8');
-    var json = JSON.parse(fileContents);
+    const fileContents = fs.readFileSync('./test/fixtures/private.json', 'utf-8');
+    const json = JSON.parse(fileContents);
 
     // Now open a stream on the same file.
-    var stream = fs.createReadStream('./test/fixtures/private.json');
+    const stream = fs.createReadStream('./test/fixtures/private.json');
 
     // And pass it into the fromStream method.
     client.fromStream(stream, function (err) {

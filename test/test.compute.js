@@ -16,9 +16,9 @@
 
 'use strict';
 
-var assert = require('assert');
-var GoogleAuth = require('../lib/auth/googleauth.js');
-var nock = require('nock');
+const assert = require('assert');
+const GoogleAuth = require('../lib/auth/googleauth.js');
+const nock = require('nock');
 
 nock.disableNetConnect();
 
@@ -27,22 +27,22 @@ describe('Initial credentials', function() {
   it('should create a dummy refresh token string', function () {
     // It is important that the compute client is created with a refresh token value filled
     // in, or else the rest of the logic will not work.
-    var auth = new GoogleAuth();
-    var compute = new auth.Compute();
+    const auth = new GoogleAuth();
+    const compute = new auth.Compute();
     assert.equal('compute-placeholder', compute.credentials.refresh_token);
   });
 });
 
 describe('Compute auth client', function() {
   // set up compute client.
-  var compute;
+  let compute;
   beforeEach(function() {
-    var auth = new GoogleAuth();
+    const auth = new GoogleAuth();
     compute = new auth.Compute();
   });
 
   it('should get an access token for the first request', function (done) {
-    var scope = nock('http://metadata.google.internal')
+    const scope = nock('http://metadata.google.internal')
       .get('/computeMetadata/v1beta1/instance/service-accounts/default/token')
       .reply(200, { access_token: 'abc123', expires_in: 10000 });
     compute.request({ uri: 'http://foo' }, function () {
@@ -53,7 +53,7 @@ describe('Compute auth client', function() {
   });
 
   it('should refresh if access token has expired', function (done) {
-    var scope = nock('http://metadata.google.internal')
+    const scope = nock('http://metadata.google.internal')
       .get('/computeMetadata/v1beta1/instance/service-accounts/default/token')
       .reply(200, { access_token: 'abc123', expires_in: 10000 });
     compute.credentials.access_token = 'initial-access-token';
@@ -66,7 +66,7 @@ describe('Compute auth client', function() {
   });
 
   it('should not refresh if access token has not expired', function (done) {
-    var scope = nock('http://metadata.google.internal')
+    const scope = nock('http://metadata.google.internal')
       .get('/computeMetadata/v1beta1/instance/service-accounts/default/token')
       .reply(200, { access_token: 'abc123', expires_in: 10000 });
     compute.credentials.access_token = 'initial-access-token';
@@ -81,8 +81,8 @@ describe('Compute auth client', function() {
 
   describe('.createScopedRequired', function () {
     it('should return false', function () {
-      var auth = new GoogleAuth();
-      var compute = new auth.Compute();
+      const auth = new GoogleAuth();
+      const compute = new auth.Compute();
       assert.equal(false, compute.createScopedRequired());
     });
   });

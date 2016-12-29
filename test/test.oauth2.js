@@ -16,38 +16,38 @@
 
 'use strict';
 
-var url = require('url');
-var assert = require('assert');
-var qs = require('querystring');
-var fs = require('fs');
-var GoogleAuth = require('../lib/auth/googleauth.js');
-var crypto = require('crypto');
-var nock = require('nock');
-var AuthClient = require('../lib/auth/authclient.js');
+const url = require('url');
+const assert = require('assert');
+const qs = require('querystring');
+const fs = require('fs');
+const GoogleAuth = require('../lib/auth/googleauth.js');
+const crypto = require('crypto');
+const nock = require('nock');
+const AuthClient = require('../lib/auth/authclient.js');
 
 nock.disableNetConnect();
 
 describe('OAuth2 client', function() {
 
-  var CLIENT_ID = 'CLIENT_ID';
-  var CLIENT_SECRET = 'CLIENT_SECRET';
-  var REDIRECT_URI = 'REDIRECT';
-  var ACCESS_TYPE = 'offline';
-  var SCOPE = 'scopex';
-  var SCOPE_ARRAY = ['scopex', 'scopey'];
+  const CLIENT_ID = 'CLIENT_ID';
+  const CLIENT_SECRET = 'CLIENT_SECRET';
+  const REDIRECT_URI = 'REDIRECT';
+  const ACCESS_TYPE = 'offline';
+  const SCOPE = 'scopex';
+  const SCOPE_ARRAY = ['scopex', 'scopey'];
 
   it('should generate a valid consent page url', function(done) {
-    var opts = {
+    const opts = {
       access_type: ACCESS_TYPE,
       scope: SCOPE,
       response_type: 'code token'
     };
 
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-    var generated = oauth2client.generateAuthUrl(opts);
-    var parsed = url.parse(generated);
-    var query = qs.parse(parsed.query);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const generated = oauth2client.generateAuthUrl(opts);
+    const parsed = url.parse(generated);
+    const query = qs.parse(parsed.query);
 
     assert.equal(query.response_type, 'code token');
     assert.equal(query.access_type, ACCESS_TYPE);
@@ -58,24 +58,24 @@ describe('OAuth2 client', function() {
   });
 
   it('should throw if using AuthClient directly', function() {
-    var authClient = new AuthClient();
+    const authClient = new AuthClient();
     assert.throws(function() {
       authClient.request();
     }, 'Not implemented yet.');
   });
 
   it('should allow scopes to be specified as array', function(done) {
-    var opts = {
+    const opts = {
       access_type: ACCESS_TYPE,
       scope: SCOPE_ARRAY,
       response_type: 'code token'
     };
 
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-    var generated = oauth2client.generateAuthUrl(opts);
-    var parsed = url.parse(generated);
-    var query = qs.parse(parsed.query);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const generated = oauth2client.generateAuthUrl(opts);
+    const parsed = url.parse(generated);
+    const query = qs.parse(parsed.query);
 
     assert.equal(query.scope, SCOPE_ARRAY.join(' '));
     done();
@@ -83,11 +83,11 @@ describe('OAuth2 client', function() {
 
   it('should set response_type param to code if none is given while' +
       'generating the consent page url', function(done) {
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-    var generated = oauth2client.generateAuthUrl();
-    var parsed = url.parse(generated);
-    var query = qs.parse(parsed.query);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const generated = oauth2client.generateAuthUrl();
+    const parsed = url.parse(generated);
+    const query = qs.parse(parsed.query);
 
     assert.equal(query.response_type, 'code');
     done();
@@ -96,8 +96,8 @@ describe('OAuth2 client', function() {
   // jason: keep
   /*
   it('should return err no access or refresh token is set before making a request', function(done) {
-    var auth = new GoogleAuth();
-    var oauth2client = new googleapis.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const auth = new GoogleAuth();
+    const oauth2client = new googleapis.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     new googleapis.GoogleApis()
       .urlshortener('v1').url.get({ shortUrl: '123', auth: oauth2client }, function(err, result) {
         assert.equal(err.message, 'No access or refresh token is set.');
@@ -108,23 +108,23 @@ describe('OAuth2 client', function() {
 
 
   it('should not throw any exceptions if only refresh token is set', function() {
-    var oauth2client = new googleapis.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const oauth2client = new googleapis.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     oauth2client.credentials = { refresh_token: 'refresh_token' };
     assert.doesNotThrow(function() {
-      var google = new googleapis.GoogleApis();
-      var options = { auth: oauth2client, shortUrl: '...' };
+      const google = new googleapis.GoogleApis();
+      const options = { auth: oauth2client, shortUrl: '...' };
       google.urlshortener('v1').url.get(options, noop);
     });
   });
 
   it('should set access token type to Bearer if none is set', function(done) {
-    var oauth2client = new googleapis.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const oauth2client = new googleapis.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     oauth2client.credentials = { access_token: 'foo', refresh_token: '' };
 
-    var scope = nock('https://www.googleapis.com').get('/urlshortener/v1/url/history').reply(200);
+    const scope = nock('https://www.googleapis.com').get('/urlshortener/v1/url/history').reply(200);
 
-    var google = new googleapis.GoogleApis();
-    var urlshortener = google.urlshortener('v1');
+    const google = new googleapis.GoogleApis();
+    const urlshortener = google.urlshortener('v1');
     urlshortener.url.list({ auth: oauth2client }, function(err) {
       assert.equal(oauth2client.credentials.token_type, 'Bearer');
       scope.done();
@@ -134,14 +134,14 @@ describe('OAuth2 client', function() {
 */
 
   it('should verify a valid certificate against a jwt', function(done) {
-    var publicKey = fs.readFileSync('./test/fixtures/public.pem', 'utf-8');
-    var privateKey = fs.readFileSync('./test/fixtures/private.pem', 'utf-8');
+    const publicKey = fs.readFileSync('./test/fixtures/public.pem', 'utf-8');
+    const privateKey = fs.readFileSync('./test/fixtures/private.pem', 'utf-8');
 
-    var maxLifetimeSecs = 86400;
-    var now = new Date().getTime() / 1000;
-    var expiry = now + (maxLifetimeSecs / 2);
+    const maxLifetimeSecs = 86400;
+    const now = new Date().getTime() / 1000;
+    const expiry = now + (maxLifetimeSecs / 2);
 
-    var idToken = '{' +
+    const idToken = '{' +
         '"iss":"testissuer",' +
         '"aud":"testaudience",' +
         '"azp":"testauthorisedparty",' +
@@ -152,23 +152,23 @@ describe('OAuth2 client', function() {
         '"iat":' + now + ',' +
         '"exp":' + expiry +
       '}';
-    var envelope = '{' +
+    const envelope = '{' +
         '"kid":"keyid",' +
         '"alg":"RS256"' +
       '}';
 
-    var data = new Buffer(envelope).toString('base64') +
+    let data = new Buffer(envelope).toString('base64') +
       '.' + new Buffer(idToken).toString('base64');
 
-    var signer = crypto.createSign('sha256');
+    const signer = crypto.createSign('sha256');
     signer.update(data);
-    var signature = signer.sign(privateKey, 'base64');
+    const signature = signer.sign(privateKey, 'base64');
 
     data += '.' + signature;
 
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-    var login = oauth2client.verifySignedJwtWithCerts(data,
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const login = oauth2client.verifySignedJwtWithCerts(data,
         {keyid: publicKey}, 'testaudience');
 
     assert.equal(login.getUserId(), '123456789');
@@ -176,16 +176,16 @@ describe('OAuth2 client', function() {
   });
 
   it('should fail due to invalid audience', function(done) {
-    var publicKey = fs.readFileSync('./test/fixtures/public.pem',
+    const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
-    var privateKey = fs.readFileSync('./test/fixtures/private.pem',
+    const privateKey = fs.readFileSync('./test/fixtures/private.pem',
         'utf-8');
 
-    var maxLifetimeSecs = 86400;
-    var now = new Date().getTime() / 1000;
-    var expiry = now + (maxLifetimeSecs / 2);
+    const maxLifetimeSecs = 86400;
+    const now = new Date().getTime() / 1000;
+    const expiry = now + (maxLifetimeSecs / 2);
 
-    var idToken = '{' +
+    const idToken = '{' +
         '"iss":"testissuer",' +
         '"aud":"wrongaudience",' +
         '"azp":"testauthorisedparty",' +
@@ -196,22 +196,22 @@ describe('OAuth2 client', function() {
         '"iat":' + now + ',' +
         '"exp":' + expiry +
       '}';
-    var envelope = '{' +
+    const envelope = '{' +
         '"kid":"keyid",' +
         '"alg":"RS256"' +
       '}';
 
-    var data = new Buffer(envelope).toString('base64') +
+    let data = new Buffer(envelope).toString('base64') +
       '.' + new Buffer(idToken).toString('base64');
 
-    var signer = crypto.createSign('sha256');
+    const signer = crypto.createSign('sha256');
     signer.update(data);
-    var signature = signer.sign(privateKey, 'base64');
+    const signature = signer.sign(privateKey, 'base64');
 
     data += '.' + signature;
 
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
       function() {
         oauth2client.verifySignedJwtWithCerts(
@@ -224,18 +224,18 @@ describe('OAuth2 client', function() {
     );
     done();
   });
-  
+
   it('should fail due to invalid array of audiences', function(done) {
-    var publicKey = fs.readFileSync('./test/fixtures/public.pem',
+    const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
-    var privateKey = fs.readFileSync('./test/fixtures/private.pem',
+    const privateKey = fs.readFileSync('./test/fixtures/private.pem',
         'utf-8');
 
-    var maxLifetimeSecs = 86400;
-    var now = new Date().getTime() / 1000;
-    var expiry = now + (maxLifetimeSecs / 2);
+    const maxLifetimeSecs = 86400;
+    const now = new Date().getTime() / 1000;
+    const expiry = now + (maxLifetimeSecs / 2);
 
-    var idToken = '{' +
+    const idToken = '{' +
         '"iss":"testissuer",' +
         '"aud":"wrongaudience",' +
         '"azp":"testauthorisedparty",' +
@@ -246,23 +246,23 @@ describe('OAuth2 client', function() {
         '"iat":' + now + ',' +
         '"exp":' + expiry +
       '}';
-    var envelope = '{' +
+    const envelope = '{' +
         '"kid":"keyid",' +
         '"alg":"RS256"' +
       '}';
 
-    var data = new Buffer(envelope).toString('base64') +
+    let data = new Buffer(envelope).toString('base64') +
       '.' + new Buffer(idToken).toString('base64');
 
-    var signer = crypto.createSign('sha256');
+    const signer = crypto.createSign('sha256');
     signer.update(data);
-    var signature = signer.sign(privateKey, 'base64');
+    const signature = signer.sign(privateKey, 'base64');
 
     data += '.' + signature;
 
-    var validAudiences = ['testaudience','extra-audience'];
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const validAudiences = ['testaudience','extra-audience'];
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
       function() {
         oauth2client.verifySignedJwtWithCerts(
@@ -277,12 +277,12 @@ describe('OAuth2 client', function() {
   });
 
   it('should fail due to invalid signature', function(done) {
-    var publicKey = fs.readFileSync('./test/fixtures/public.pem',
+    const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
-    var privateKey = fs.readFileSync('./test/fixtures/private.pem',
+    const privateKey = fs.readFileSync('./test/fixtures/private.pem',
         'utf-8');
 
-    var idToken = '{' +
+    const idToken = '{' +
         '"iss":"testissuer",' +
         '"aud":"testaudience",' +
         '"azp":"testauthorisedparty",' +
@@ -293,23 +293,23 @@ describe('OAuth2 client', function() {
         '"iat":1393241597,' +
         '"exp":1393245497' +
       '}';
-    var envelope = '{' +
+    const envelope = '{' +
         '"kid":"keyid",' +
         '"alg":"RS256"' +
       '}';
 
-    var data = new Buffer(envelope).toString('base64') +
+    let data = new Buffer(envelope).toString('base64') +
       '.' + new Buffer(idToken).toString('base64');
 
-    var signer = crypto.createSign('sha256');
+    const signer = crypto.createSign('sha256');
     signer.update(data);
-    var signature = signer.sign(privateKey, 'base64');
+    const signature = signer.sign(privateKey, 'base64');
 
     //Originally: data += '.'+signature;
     data += signature;
 
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
       function() {
         oauth2client.verifySignedJwtWithCerts(
@@ -325,16 +325,16 @@ describe('OAuth2 client', function() {
   });
 
   it('should fail due to invalid envelope', function(done) {
-    var publicKey = fs.readFileSync('./test/fixtures/public.pem',
+    const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
-    var privateKey = fs.readFileSync('./test/fixtures/private.pem',
+    const privateKey = fs.readFileSync('./test/fixtures/private.pem',
         'utf-8');
 
-    var maxLifetimeSecs = 86400;
-    var now = new Date().getTime() / 1000;
-    var expiry = now + (maxLifetimeSecs / 2);
+    const maxLifetimeSecs = 86400;
+    const now = new Date().getTime() / 1000;
+    const expiry = now + (maxLifetimeSecs / 2);
 
-    var idToken = '{' +
+    const idToken = '{' +
         '"iss":"testissuer",' +
         '"aud":"testaudience",' +
         '"azp":"testauthorisedparty",' +
@@ -345,22 +345,22 @@ describe('OAuth2 client', function() {
         '"iat":' + now + ',' +
         '"exp":' + expiry +
       '}';
-    var envelope = '{' +
+    const envelope = '{' +
         '"kid":"keyid"' +
         '"alg":"RS256"' +
       '}';
 
-    var data = new Buffer(envelope).toString('base64') +
+    let data = new Buffer(envelope).toString('base64') +
       '.' + new Buffer(idToken).toString('base64');
 
-    var signer = crypto.createSign('sha256');
+    const signer = crypto.createSign('sha256');
     signer.update(data);
-    var signature = signer.sign(privateKey, 'base64');
+    const signature = signer.sign(privateKey, 'base64');
 
     data += '.' + signature;
 
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
       function() {
         oauth2client.verifySignedJwtWithCerts(
@@ -376,16 +376,16 @@ describe('OAuth2 client', function() {
   });
 
   it('should fail due to invalid payload', function(done) {
-    var publicKey = fs.readFileSync('./test/fixtures/public.pem',
+    const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
-    var privateKey = fs.readFileSync('./test/fixtures/private.pem',
+    const privateKey = fs.readFileSync('./test/fixtures/private.pem',
         'utf-8');
 
-    var maxLifetimeSecs = 86400;
-    var now = new Date().getTime() / 1000;
-    var expiry = now + (maxLifetimeSecs / 2);
+    const maxLifetimeSecs = 86400;
+    const now = new Date().getTime() / 1000;
+    const expiry = now + (maxLifetimeSecs / 2);
 
-    var idToken = '{' +
+    const idToken = '{' +
         '"iss":"testissuer"' +
         '"aud":"testaudience",' +
         '"azp":"testauthorisedparty",' +
@@ -396,22 +396,22 @@ describe('OAuth2 client', function() {
         '"iat":' + now + ',' +
         '"exp":' + expiry +
       '}';
-    var envelope = '{' +
+    const envelope = '{' +
         '"kid":"keyid",' +
         '"alg":"RS256"' +
       '}';
 
-    var data = new Buffer(envelope).toString('base64') +
+    let data = new Buffer(envelope).toString('base64') +
       '.' + new Buffer(idToken).toString('base64');
 
-    var signer = crypto.createSign('sha256');
+    const signer = crypto.createSign('sha256');
     signer.update(data);
-    var signature = signer.sign(privateKey, 'base64');
+    const signature = signer.sign(privateKey, 'base64');
 
     data += '.' + signature;
 
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
       function() {
         oauth2client.verifySignedJwtWithCerts(
@@ -427,14 +427,14 @@ describe('OAuth2 client', function() {
   });
 
   it('should fail due to invalid signature', function(done) {
-    var publicKey = fs.readFileSync('./test/fixtures/public.pem',
+    const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
 
-    var maxLifetimeSecs = 86400;
-    var now = new Date().getTime() / 1000;
-    var expiry = now + (maxLifetimeSecs / 2);
+    const maxLifetimeSecs = 86400;
+    const now = new Date().getTime() / 1000;
+    const expiry = now + (maxLifetimeSecs / 2);
 
-    var idToken = '{' +
+    const idToken = '{' +
         '"iss":"testissuer",' +
         '"aud":"testaudience",' +
         '"azp":"testauthorisedparty",' +
@@ -445,17 +445,17 @@ describe('OAuth2 client', function() {
         '"iat":' + now + ',' +
         '"exp":' + expiry +
       '}';
-    var envelope = '{' +
+    const envelope = '{' +
         '"kid":"keyid",' +
         '"alg":"RS256"' +
       '}';
 
-    var data = new Buffer(envelope).toString('base64') +
+    const data = new Buffer(envelope).toString('base64') +
       '.' + new Buffer(idToken).toString('base64') +
       '.' + 'broken-signature';
 
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
       function() {
         oauth2client.verifySignedJwtWithCerts(
@@ -471,14 +471,14 @@ describe('OAuth2 client', function() {
   });
 
   it('should fail due to no expiration date', function(done) {
-    var publicKey = fs.readFileSync('./test/fixtures/public.pem',
+    const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
-    var privateKey = fs.readFileSync('./test/fixtures/private.pem',
+    const privateKey = fs.readFileSync('./test/fixtures/private.pem',
         'utf-8');
 
-    var now = new Date().getTime() / 1000;
+    const now = new Date().getTime() / 1000;
 
-    var idToken = '{' +
+    const idToken = '{' +
         '"iss":"testissuer",' +
         '"aud":"testaudience",' +
         '"azp":"testauthorisedparty",' +
@@ -488,22 +488,22 @@ describe('OAuth2 client', function() {
         '"email":"test@test.com",' +
         '"iat":' + now +
       '}';
-    var envelope = '{' +
+    const envelope = '{' +
         '"kid":"keyid",' +
         '"alg":"RS256"' +
       '}';
 
-    var data = new Buffer(envelope).toString('base64') +
+    let data = new Buffer(envelope).toString('base64') +
       '.' + new Buffer(idToken).toString('base64');
 
-    var signer = crypto.createSign('sha256');
+    const signer = crypto.createSign('sha256');
     signer.update(data);
-    var signature = signer.sign(privateKey, 'base64');
+    const signature = signer.sign(privateKey, 'base64');
 
     data += '.' + signature;
 
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
       function() {
         oauth2client.verifySignedJwtWithCerts(
@@ -519,16 +519,16 @@ describe('OAuth2 client', function() {
   });
 
   it('should fail due to no issue time', function(done) {
-    var publicKey = fs.readFileSync('./test/fixtures/public.pem',
+    const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
-    var privateKey = fs.readFileSync('./test/fixtures/private.pem',
+    const privateKey = fs.readFileSync('./test/fixtures/private.pem',
         'utf-8');
 
-    var maxLifetimeSecs = 86400;
-    var now = new Date().getTime() / 1000;
-    var expiry = now + (maxLifetimeSecs / 2);
+    const maxLifetimeSecs = 86400;
+    const now = new Date().getTime() / 1000;
+    const expiry = now + (maxLifetimeSecs / 2);
 
-    var idToken = '{' +
+    const idToken = '{' +
         '"iss":"testissuer",' +
         '"aud":"testaudience",' +
         '"azp":"testauthorisedparty",' +
@@ -538,22 +538,22 @@ describe('OAuth2 client', function() {
         '"email":"test@test.com",' +
         '"exp":' + expiry +
       '}';
-    var envelope = '{' +
+    const envelope = '{' +
         '"kid":"keyid",' +
         '"alg":"RS256"' +
       '}';
 
-    var data = new Buffer(envelope).toString('base64') +
+    let data = new Buffer(envelope).toString('base64') +
       '.' + new Buffer(idToken).toString('base64');
 
-    var signer = crypto.createSign('sha256');
+    const signer = crypto.createSign('sha256');
     signer.update(data);
-    var signature = signer.sign(privateKey, 'base64');
+    const signature = signer.sign(privateKey, 'base64');
 
     data += '.' + signature;
 
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
       function() {
         oauth2client.verifySignedJwtWithCerts(
@@ -569,15 +569,15 @@ describe('OAuth2 client', function() {
   });
 
   it('should fail due to certificate with expiration date in future', function(done) {
-    var publicKey = fs.readFileSync('./test/fixtures/public.pem',
+    const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
-    var privateKey = fs.readFileSync('./test/fixtures/private.pem',
+    const privateKey = fs.readFileSync('./test/fixtures/private.pem',
         'utf-8');
 
-    var maxLifetimeSecs = 86400;
-    var now = new Date().getTime() / 1000;
-    var expiry = now + (2 * maxLifetimeSecs);
-    var idToken = '{' +
+    const maxLifetimeSecs = 86400;
+    const now = new Date().getTime() / 1000;
+    const expiry = now + (2 * maxLifetimeSecs);
+    const idToken = '{' +
         '"iss":"testissuer",' +
         '"aud":"testaudience",' +
         '"azp":"testauthorisedparty",' +
@@ -588,22 +588,22 @@ describe('OAuth2 client', function() {
         '"iat":' + now + ',' +
         '"exp":' + expiry +
       '}';
-    var envelope = '{' +
+    const envelope = '{' +
         '"kid":"keyid",' +
         '"alg":"RS256"' +
       '}';
 
-    var data = new Buffer(envelope).toString('base64') +
+    let data = new Buffer(envelope).toString('base64') +
       '.' + new Buffer(idToken).toString('base64');
 
-    var signer = crypto.createSign('sha256');
+    const signer = crypto.createSign('sha256');
     signer.update(data);
-    var signature = signer.sign(privateKey, 'base64');
+    const signature = signer.sign(privateKey, 'base64');
 
     data += '.' + signature;
 
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
       function() {
         oauth2client.verifySignedJwtWithCerts(
@@ -619,16 +619,16 @@ describe('OAuth2 client', function() {
   });
 
   it('should pass due to expiration date in future with adjusted max expiry', function(done) {
-    var publicKey = fs.readFileSync('./test/fixtures/public.pem',
+    const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
-    var privateKey = fs.readFileSync('./test/fixtures/private.pem',
+    const privateKey = fs.readFileSync('./test/fixtures/private.pem',
         'utf-8');
 
-    var maxLifetimeSecs = 86400;
-    var now = new Date().getTime() / 1000;
-    var expiry = now + (2 * maxLifetimeSecs);
-    var maxExpiry = (3 * maxLifetimeSecs);
-    var idToken = '{' +
+    const maxLifetimeSecs = 86400;
+    const now = new Date().getTime() / 1000;
+    const expiry = now + (2 * maxLifetimeSecs);
+    const maxExpiry = (3 * maxLifetimeSecs);
+    const idToken = '{' +
         '"iss":"testissuer",' +
         '"aud":"testaudience",' +
         '"azp":"testauthorisedparty",' +
@@ -639,22 +639,22 @@ describe('OAuth2 client', function() {
         '"iat":' + now + ',' +
         '"exp":' + expiry +
       '}';
-    var envelope = '{' +
+    const envelope = '{' +
         '"kid":"keyid",' +
         '"alg":"RS256"' +
       '}';
 
-    var data = new Buffer(envelope).toString('base64') +
+    let data = new Buffer(envelope).toString('base64') +
       '.' + new Buffer(idToken).toString('base64');
 
-    var signer = crypto.createSign('sha256');
+    const signer = crypto.createSign('sha256');
     signer.update(data);
-    var signature = signer.sign(privateKey, 'base64');
+    const signature = signer.sign(privateKey, 'base64');
 
     data += '.' + signature;
 
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     oauth2client.verifySignedJwtWithCerts(
       data,
       {keyid: publicKey},
@@ -667,17 +667,17 @@ describe('OAuth2 client', function() {
   });
 
   it('should fail due to token being used to early', function(done) {
-    var publicKey = fs.readFileSync('./test/fixtures/public.pem',
+    const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
-    var privateKey = fs.readFileSync('./test/fixtures/private.pem',
+    const privateKey = fs.readFileSync('./test/fixtures/private.pem',
         'utf-8');
 
-    var maxLifetimeSecs = 86400;
-    var clockSkews = 300;
-    var now = (new Date().getTime() / 1000);
-    var expiry = now + (maxLifetimeSecs / 2);
-    var issueTime = now + (clockSkews * 2);
-    var idToken = '{' +
+    const maxLifetimeSecs = 86400;
+    const clockSkews = 300;
+    const now = (new Date().getTime() / 1000);
+    const expiry = now + (maxLifetimeSecs / 2);
+    const issueTime = now + (clockSkews * 2);
+    const idToken = '{' +
         '"iss":"testissuer",' +
         '"aud":"testaudience",' +
         '"azp":"testauthorisedparty",' +
@@ -688,22 +688,22 @@ describe('OAuth2 client', function() {
         '"iat":' + issueTime + ',' +
         '"exp":' + expiry +
       '}';
-    var envelope = '{' +
+    const envelope = '{' +
         '"kid":"keyid",' +
         '"alg":"RS256"' +
       '}';
 
-    var data = new Buffer(envelope).toString('base64') +
+    let data = new Buffer(envelope).toString('base64') +
       '.' + new Buffer(idToken).toString('base64');
 
-    var signer = crypto.createSign('sha256');
+    const signer = crypto.createSign('sha256');
     signer.update(data);
-    var signature = signer.sign(privateKey, 'base64');
+    const signature = signer.sign(privateKey, 'base64');
 
     data += '.' + signature;
 
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
       function() {
         oauth2client.verifySignedJwtWithCerts(
@@ -719,17 +719,17 @@ describe('OAuth2 client', function() {
   });
 
   it('should fail due to token being used to late', function(done) {
-    var publicKey = fs.readFileSync('./test/fixtures/public.pem',
+    const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
-    var privateKey = fs.readFileSync('./test/fixtures/private.pem',
+    const privateKey = fs.readFileSync('./test/fixtures/private.pem',
         'utf-8');
 
-    var maxLifetimeSecs = 86400;
-    var clockSkews = 300;
-    var now = (new Date().getTime() / 1000);
-    var expiry = now - (maxLifetimeSecs / 2);
-    var issueTime = now - (clockSkews * 2);
-    var idToken = '{' +
+    const maxLifetimeSecs = 86400;
+    const clockSkews = 300;
+    const now = (new Date().getTime() / 1000);
+    const expiry = now - (maxLifetimeSecs / 2);
+    const issueTime = now - (clockSkews * 2);
+    const idToken = '{' +
         '"iss":"testissuer",' +
         '"aud":"testaudience",' +
         '"azp":"testauthorisedparty",' +
@@ -740,22 +740,22 @@ describe('OAuth2 client', function() {
         '"iat":' + issueTime + ',' +
         '"exp":' + expiry +
       '}';
-    var envelope = '{' +
+    const envelope = '{' +
         '"kid":"keyid",' +
         '"alg":"RS256"' +
       '}';
 
-    var data = new Buffer(envelope).toString('base64') +
+    let data = new Buffer(envelope).toString('base64') +
       '.' + new Buffer(idToken).toString('base64');
 
-    var signer = crypto.createSign('sha256');
+    const signer = crypto.createSign('sha256');
     signer.update(data);
-    var signature = signer.sign(privateKey, 'base64');
+    const signature = signer.sign(privateKey, 'base64');
 
     data += '.' + signature;
 
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
       function() {
         oauth2client.verifySignedJwtWithCerts(
@@ -771,15 +771,15 @@ describe('OAuth2 client', function() {
   });
 
   it('should fail due to invalid issuer', function(done) {
-    var publicKey = fs.readFileSync('./test/fixtures/public.pem',
+    const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
-    var privateKey = fs.readFileSync('./test/fixtures/private.pem',
+    const privateKey = fs.readFileSync('./test/fixtures/private.pem',
         'utf-8');
 
-    var maxLifetimeSecs = 86400;
-    var now = (new Date().getTime() / 1000);
-    var expiry = now + (maxLifetimeSecs / 2);
-    var idToken = '{' +
+    const maxLifetimeSecs = 86400;
+    const now = (new Date().getTime() / 1000);
+    const expiry = now + (maxLifetimeSecs / 2);
+    const idToken = '{' +
         '"iss":"invalidissuer",' +
         '"aud":"testaudience",' +
         '"azp":"testauthorisedparty",' +
@@ -790,22 +790,22 @@ describe('OAuth2 client', function() {
         '"iat":' + now + ',' +
         '"exp":' + expiry +
       '}';
-    var envelope = '{' +
+    const envelope = '{' +
         '"kid":"keyid",' +
         '"alg":"RS256"' +
       '}';
 
-    var data = new Buffer(envelope).toString('base64') +
+    let data = new Buffer(envelope).toString('base64') +
       '.' + new Buffer(idToken).toString('base64');
 
-    var signer = crypto.createSign('sha256');
+    const signer = crypto.createSign('sha256');
     signer.update(data);
-    var signature = signer.sign(privateKey, 'base64');
+    const signature = signer.sign(privateKey, 'base64');
 
     data += '.' + signature;
 
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     assert.throws(
       function() {
         oauth2client.verifySignedJwtWithCerts(
@@ -822,15 +822,15 @@ describe('OAuth2 client', function() {
   });
 
   it('should pass due to valid issuer', function(done) {
-    var publicKey = fs.readFileSync('./test/fixtures/public.pem',
+    const publicKey = fs.readFileSync('./test/fixtures/public.pem',
         'utf-8');
-    var privateKey = fs.readFileSync('./test/fixtures/private.pem',
+    const privateKey = fs.readFileSync('./test/fixtures/private.pem',
         'utf-8');
 
-    var maxLifetimeSecs = 86400;
-    var now = (new Date().getTime() / 1000);
-    var expiry = now + (maxLifetimeSecs / 2);
-    var idToken = '{' +
+    const maxLifetimeSecs = 86400;
+    const now = (new Date().getTime() / 1000);
+    const expiry = now + (maxLifetimeSecs / 2);
+    const idToken = '{' +
         '"iss":"testissuer",' +
         '"aud":"testaudience",' +
         '"azp":"testauthorisedparty",' +
@@ -841,22 +841,22 @@ describe('OAuth2 client', function() {
         '"iat":' + now + ',' +
         '"exp":' + expiry +
       '}';
-    var envelope = '{' +
+    const envelope = '{' +
         '"kid":"keyid",' +
         '"alg":"RS256"' +
       '}';
 
-    var data = new Buffer(envelope).toString('base64') +
+    let data = new Buffer(envelope).toString('base64') +
       '.' + new Buffer(idToken).toString('base64');
 
-    var signer = crypto.createSign('sha256');
+    const signer = crypto.createSign('sha256');
     signer.update(data);
-    var signature = signer.sign(privateKey, 'base64');
+    const signature = signer.sign(privateKey, 'base64');
 
     data += '.' + signature;
 
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     oauth2client.verifySignedJwtWithCerts(
       data,
       {keyid: publicKey},
@@ -868,11 +868,11 @@ describe('OAuth2 client', function() {
   });
 
   it('should be able to retrieve a list of Google certificates', function(done) {
-    var scope = nock('https://www.googleapis.com')
+    const scope = nock('https://www.googleapis.com')
       .get('/oauth2/v1/certs')
       .replyWithFile(200, __dirname + '/fixtures/oauthcerts.json');
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     oauth2client.getFederatedSignonCerts(function(err, certs) {
       assert.equal(err, null);
       assert.equal(Object.keys(certs).length, 2);
@@ -884,7 +884,7 @@ describe('OAuth2 client', function() {
   });
 
   it('should be able to retrieve a list of Google certificates from cache again', function(done) {
-      var scope = nock('https://www.googleapis.com')
+      const scope = nock('https://www.googleapis.com')
           .defaultReplyHeaders({
             'Cache-Control': 'public, max-age=23641, must-revalidate, no-transform',
             'Content-Type': 'application/json'
@@ -892,8 +892,8 @@ describe('OAuth2 client', function() {
           .get('/oauth2/v1/certs')
           .once()
           .replyWithFile(200, __dirname + '/fixtures/oauthcerts.json');
-      var auth = new GoogleAuth();
-      var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+      const auth = new GoogleAuth();
+      const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
       oauth2client.getFederatedSignonCerts(function(err, certs) {
         assert.equal(err, null);
         assert.equal(Object.keys(certs).length, 2);
@@ -909,44 +909,44 @@ describe('OAuth2 client', function() {
   });
 
   it('should set redirect_uri if not provided in options', function() {
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-    var generated = oauth2client.generateAuthUrl({});
-    var parsed = url.parse(generated);
-    var query = qs.parse(parsed.query);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const generated = oauth2client.generateAuthUrl({});
+    const parsed = url.parse(generated);
+    const query = qs.parse(parsed.query);
     assert.equal(query.redirect_uri, REDIRECT_URI);
   });
 
   it('should set client_id if not provided in options', function() {
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-    var generated = oauth2client.generateAuthUrl({});
-    var parsed = url.parse(generated);
-    var query = qs.parse(parsed.query);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const generated = oauth2client.generateAuthUrl({});
+    const parsed = url.parse(generated);
+    const query = qs.parse(parsed.query);
     assert.equal(query.client_id, CLIENT_ID);
   });
 
   it('should override redirect_uri if provided in options', function() {
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-    var generated = oauth2client.generateAuthUrl({ redirect_uri: 'overridden' });
-    var parsed = url.parse(generated);
-    var query = qs.parse(parsed.query);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const generated = oauth2client.generateAuthUrl({ redirect_uri: 'overridden' });
+    const parsed = url.parse(generated);
+    const query = qs.parse(parsed.query);
     assert.equal(query.redirect_uri, 'overridden');
   });
 
   it('should override client_id if provided in options', function() {
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-    var generated = oauth2client.generateAuthUrl({ client_id: 'client_override' });
-    var parsed = url.parse(generated);
-    var query = qs.parse(parsed.query);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const generated = oauth2client.generateAuthUrl({ client_id: 'client_override' });
+    const parsed = url.parse(generated);
+    const query = qs.parse(parsed.query);
     assert.equal(query.client_id, 'client_override');
   });
 
   it('should return error in callback on request', function(done) {
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     oauth2client.request({}, function(err, result) {
       assert.equal(err.message, 'No access or refresh token is set.');
       assert.equal(result, null);
@@ -955,8 +955,8 @@ describe('OAuth2 client', function() {
   });
 
   it('should return error in callback on refreshAccessToken', function(done) {
-    var auth = new GoogleAuth();
-    var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    const auth = new GoogleAuth();
+    const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     oauth2client.refreshAccessToken(function(err, result) {
       assert.equal(err.message, 'No refresh token is set.');
       assert.equal(result, null);
@@ -965,7 +965,7 @@ describe('OAuth2 client', function() {
   });
 
   describe('request()', function() {
-    var scope;
+    let scope;
 
     beforeEach(function() {
       scope = nock('https://accounts.google.com')
@@ -982,8 +982,8 @@ describe('OAuth2 client', function() {
     });
 
     it('should refresh token if missing access token', function(done) {
-      var auth = new GoogleAuth();
-      var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+      const auth = new GoogleAuth();
+      const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
       oauth2client.credentials = {
         refresh_token: 'refresh-token-placeholder'
@@ -996,8 +996,8 @@ describe('OAuth2 client', function() {
     });
 
     it('should refresh if access token is expired', function(done) {
-      var auth = new GoogleAuth();
-      var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+      const auth = new GoogleAuth();
+      const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
       oauth2client.credentials = {
         access_token: 'initial-access-token',
@@ -1012,8 +1012,8 @@ describe('OAuth2 client', function() {
     });
 
     it('should not refresh if not expired', function(done) {
-      var auth = new GoogleAuth();
-      var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+      const auth = new GoogleAuth();
+      const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
       oauth2client.credentials = {
         access_token: 'initial-access-token',
@@ -1029,8 +1029,8 @@ describe('OAuth2 client', function() {
     });
 
     it('should assume access token is not expired', function(done) {
-      var auth = new GoogleAuth();
-      var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+      const auth = new GoogleAuth();
+      const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
       oauth2client.credentials = {
         access_token: 'initial-access-token',
@@ -1055,8 +1055,8 @@ describe('OAuth2 client', function() {
               }
             });
 
-        var auth = new GoogleAuth();
-        var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+        const auth = new GoogleAuth();
+        const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
         oauth2client.credentials = {
           access_token: 'initial-access-token',
@@ -1073,11 +1073,11 @@ describe('OAuth2 client', function() {
 
   describe('revokeCredentials()', function() {
     it('should revoke credentials if access token present', function(done) {
-      var scope = nock('https://accounts.google.com')
+      const scope = nock('https://accounts.google.com')
           .get('/o/oauth2/revoke?token=abc')
           .reply(200, { success: true });
-      var auth = new GoogleAuth();
-      var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+      const auth = new GoogleAuth();
+      const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
       oauth2client.credentials = { access_token: 'abc', refresh_token: 'abc' };
       oauth2client.revokeCredentials(function(err, result) {
         assert.equal(err, null);
@@ -1089,8 +1089,8 @@ describe('OAuth2 client', function() {
     });
 
     it('should clear credentials and return error if no access token to revoke', function(done) {
-      var auth = new GoogleAuth();
-      var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+      const auth = new GoogleAuth();
+      const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
       oauth2client.credentials = { refresh_token: 'abc' };
       oauth2client.revokeCredentials(function(err, result) {
         assert.equal(err.message, 'No access token to revoke.');
@@ -1103,12 +1103,12 @@ describe('OAuth2 client', function() {
 
   describe('getToken()', function() {
     it('should return expiry_date', function(done) {
-      var now = (new Date()).getTime();
-      var scope = nock('https://accounts.google.com')
+      const now = (new Date()).getTime();
+      const scope = nock('https://accounts.google.com')
           .post('/o/oauth2/token')
           .reply(200, { access_token: 'abc', refresh_token: '123', expires_in: 10 });
-      var auth = new GoogleAuth();
-      var oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+      const auth = new GoogleAuth();
+      const oauth2client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
       oauth2client.getToken('code here', function(err, tokens) {
         assert(tokens.expiry_date >= now + (10 * 1000));
         assert(tokens.expiry_date <= now + (15 * 1000));

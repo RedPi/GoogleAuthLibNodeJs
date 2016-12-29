@@ -16,23 +16,23 @@
 
 'use strict';
 
-var assert = require('assert');
-var LoginTicket = require('../lib/auth/loginticket.js');
+const assert = require('assert');
+const LoginTicket = require('../lib/auth/loginticket.js');
 
 describe('LoginTicket', function() {
 
   it('should return null userId even if no payload', function() {
-    var ticket = new LoginTicket(null, null);
+    const ticket = new LoginTicket(null, null);
     assert.equal(ticket.getUserId(), null);
   });
 
   it('should return envelope', function() {
-    var ticket = new LoginTicket('myenvelope');
+    const ticket = new LoginTicket('myenvelope');
     assert.equal(ticket.getEnvelope(), 'myenvelope');
   });
 
   it('should return attributes from getAttributes', function() {
-    var ticket = new LoginTicket('myenvelope', 'mypayload');
+    const ticket = new LoginTicket('myenvelope', 'mypayload');
     assert.deepEqual(ticket.getAttributes(), {
       envelope: 'myenvelope',
       payload: 'mypayload'

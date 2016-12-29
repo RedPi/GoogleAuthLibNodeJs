@@ -59,11 +59,11 @@ credentials file, and the fill in the placeholder variables from your project,
 the following snippet should work.
 
 ```js
-var google = require('googleapis');
-var GoogleAuth = require('google-auth-library');
+const google = require('googleapis');
+const GoogleAuth = require('google-auth-library');
 
-var authFactory = new GoogleAuth();
-var dns = google.dns('v1');
+const authFactory = new GoogleAuth();
+const dns = google.dns('v1');
 
 authFactory.getApplicationDefault(function(err, authClient) {
   if (err) {
@@ -71,11 +71,11 @@ authFactory.getApplicationDefault(function(err, authClient) {
     return;
   }
   if (authClient.createScopedRequired && authClient.createScopedRequired()) {
-    var scopes = ['https://www.googleapis.com/auth/cloud-platform'];
+    const scopes = ['https://www.googleapis.com/auth/cloud-platform'];
     authClient = authClient.createScoped(scopes);
   }
 
-  var request = {
+  const request = {
     // TODO: Change placeholders below to values for parameters to the 'get' method:
 
     // Identifies the project addressed by this request.
